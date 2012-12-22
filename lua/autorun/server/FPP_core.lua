@@ -830,6 +830,14 @@ function FPP.PlayerInitialSpawn(ply)
 end
 hook.Add("PlayerInitialSpawn", "FPP.PlayerInitialSpawn", FPP.PlayerInitialSpawn)
 
+hook.Add("OnEntityCreated","FPP.OnEntityCreated",function(ent)
+	timer.Simple(0.1, function()
+		if IsValid(ent.Owner) and not ent.OwnerID then
+			ent.OwnerID = ent.Owner:SteamID()
+		end
+	end)
+end
+
 local ENTITY = FindMetaTable("Entity")
 local backup = ENTITY.FireBullets
 local blockedEffects = {"particleeffect", "smoke", "vortdispel", "helicoptermegabomb"}
