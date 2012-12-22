@@ -787,7 +787,13 @@ function FPP.PlayerDisconnect(ply)
 	end
 
 	if ply:IsAdmin() and not tobool(FPP.Settings.FPP_GLOBALSETTINGS1.cleanupadmin) then return end
-
+	
+	for k,v in pairs(ents.GetAll()) do
+		if IsValid(v) and v.Owner then
+			v.OwnerID = ply:SteamID()
+		end
+	end
+	
 	timer.Simple(FPP.Settings.FPP_GLOBALSETTINGS1.cleanupdisconnectedtime, function()
 		if not tobool(FPP.Settings.FPP_GLOBALSETTINGS1.cleanupdisconnected) then return end -- Settings can change in time.
 
