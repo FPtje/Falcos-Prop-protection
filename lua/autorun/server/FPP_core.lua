@@ -1,3 +1,32 @@
+/*---------------------------------------------------------------------------
+DEBUG LOGGING
+---------------------------------------------------------------------------*/
+local LOGFILE
+local function Log(text)
+	if not LOGFILE then -- The log file of this session, if it's not there then make it!
+		if not file.IsDir("FPPDEBUGLOG", "DATA") then
+			file.CreateDir("FPPDEBUGLOG")
+		end
+		LOGFILE = "FPPDEBUGLOG/"..os.date("%m_%d_%Y %I_%M %p")..".txt"
+		file.Write(LOGFILE, os.date().. "\t".. text)
+		return
+	end
+	file.Append(LOGFILE, "\n"..os.date().. "\t"..(text or ""))
+end
+
+concommand.Add("FPP_PRINTDEBUG", function()
+	Log("\n\n\n\nFPP PRINT DEBUG")
+	Log("BLOCKED MODELS TABLE VAR = " .. tostring(FPP.BlockedModels))
+end)
+
+
+
+
+
+
+
+
+
 FPP = FPP or {}
 FPP.DisconnectedPlayers = FPP.DisconnectedPlayers or {}
 
@@ -6,22 +35,34 @@ FPP.DisconnectedPlayers = FPP.DisconnectedPlayers or {}
 Checks is a model is blocked
 ---------------------------------------------------------------------------*/
 local function isBlocked(model)
+	Log("IS BLOCKED CHECK WITH MODEL: '" .. tostring(model) .. "'")
 	if model == "" or not FPP.Settings or not FPP.Settings.FPP_BLOCKMODELSETTINGS1 or
 		not tobool(FPP.Settings.FPP_BLOCKMODELSETTINGS1.toggle)
-		or not FPP.BlockedModels or not model then return end
+		or not FPP.BlockedModels or not model then
+
+		Log("FIRST RETURN " .. tostring(model == "") .. ", " .. tostring(not FPP.Settings)  .. ", " .. tostring(not FPP.Settings.FPP_BLOCKMODELSETTINGS1)  .. ", " ..
+		tostring(not tobool(FPP.Settings.FPP_BLOCKMODELSETTINGS1.toggle))  .. ", " ..
+		tostring(not FPP.BlockedModels)  .. ", " .. tostring(not model) .. "\n")
+		return
+	end
 
 	model = string.lower(model or "")
 	model = string.Replace(model, "\\", "/")
 	model = string.gsub(model, "[\\/]+", "/")
+	Log("EDITED MODEL '" .. model .. "'")
 
 	local found = FPP.BlockedModels[model]
 	if tobool(FPP.Settings.FPP_BLOCKMODELSETTINGS1.iswhitelist) and not found then
 		-- Prop is not in the white list
+		Log("WHITELIST AND NOT FOUND" .. "\n")
 		return true, "The model of this entity is not in the white list!"
 	elseif not tobool(FPP.Settings.FPP_BLOCKMODELSETTINGS1.iswhitelist) and found then
+		Log("BLACKLIST AND FOUND" .. "\n")
 		-- prop is in the black list
 		return true, "The model of this entity is in the black list!"
 	end
+
+	Log("Not blocked" .. "\n")
 	return false
 end
 
@@ -29,6 +70,7 @@ end
 Prevents spawning a prop when its model is blocked
 ---------------------------------------------------------------------------*/
 hook.Add("PlayerSpawnProp", "FPP_SpawnProp", function(ply, model)
+	Log("PlayerSpawnProp")
 	local blocked, msg = isBlocked(model)
 	if blocked then
 		FPP.Notify(ply, msg, false)
@@ -55,6 +97,7 @@ if cleanup then
 			ent.Owner = ply
 			ent.OwnerID = ply:SteamID()
 
+			Log("Cleanup.Add " .. tostring(ply) .. ", " .. tostring(Type) .. ", " .. tostring(ent))
 			local blocked, msg = isBlocked(model)
 			if blocked then
 				FPP.Notify(ply, msg, false)
