@@ -16,7 +16,11 @@ end
 
 concommand.Add("FPP_PRINTDEBUG", function()
 	Log("\n\n\n\nFPP PRINT DEBUG")
-	Log("BLOCKED MODELS TABLE VAR = " .. tostring(FPP.BlockedModels))
+	Log("BLOCKED MODELS TABLE VAR = " .. tostring(FPP.BlockedModels) .. " , " .. tostring(table.Count(FPP.BlockedModels or {})))
+
+	for k,v in pairs(FPP.BlockedModels or {}) do
+		Log("'" .. tostring(k) .. "'" .. "\t\t , \t\t'" .. tostring(v) .. "'")
+	end
 end)
 
 
