@@ -97,6 +97,8 @@ if cleanup then
 			ent.Owner = ply
 			ent.OwnerID = ply:SteamID()
 
+			local model = ent.GetModel and ent:GetModel()
+
 			Log("Cleanup.Add " .. tostring(ply) .. ", " .. tostring(Type) .. ", " .. tostring(ent))
 			local blocked, msg = isBlocked(model)
 			if blocked then
