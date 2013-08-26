@@ -81,18 +81,18 @@ if SERVER then
 	function ENTITY:CPPICanTool(ply, tool)
 		local Value = FPP.Protect.CanTool(ply, nil, tool, self)
 		if Value ~= false and Value ~= true then Value = true end
-		return Value-- fourth argument is entity, to avoid traces.
+		return Value
 	end
 
 	function ENTITY:CPPICanPhysgun(ply)
-		return FPP.PlayerCanTouchEnt(ply, self, "Physgun1", "FPP_PHYSGUN1")
+		return FPP.plyCanTouchEnt(ply, self, "Physgun")
 	end
 
 	function ENTITY:CPPICanPickup(ply)
-		return FPP.PlayerCanTouchEnt(ply, self, "Gravgun1", "FPP_GRAVGUN1")
+		return FPP.plyCanTouchEnt(ply, self, "Gravgun")
 	end
 
 	function ENTITY:CPPICanPunt(ply)
-		return FPP.PlayerCanTouchEnt(ply, self, "Gravgun1", "FPP_GRAVGUN1")
+		return FPP.plyCanTouchEnt(ply, self, "Gravgun")
 	end
 end

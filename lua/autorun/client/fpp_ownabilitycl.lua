@@ -12,6 +12,18 @@ local touchTypes = {
 	EntityDamage = 16
 }
 
+local reasonSize = 4 -- bits
+local reasons = {
+	[1] = "owner", -- you can't touch other people's props
+	[2] = "world",
+	[3] = "disconnected",
+	[4] = "blocked",
+	[5] = "constrained",
+	[6] = "buddy",
+	[7] = "shared",
+	[8] = "player", -- you can't pick up players
+}
+
 local function receiveTouchData(len)
 	repeat
 		local entIndex = net.ReadUInt(32)
@@ -42,9 +54,31 @@ function FPP.canTouchEnt(ent, touchType)
 	return bit.bor(ent.FPPCanTouch, touchTypes[touchType]) == ent.FPPCanTouch
 end
 
-function FPP.entGetTouchReason(ent)
-	local idx = FPP.entTouchReasons[ent:EntIndex()]
+
+local touchTypeMultiplier = {
+	["Physgun"] = 0,
+	["Gravgun"] = 1,
+	["Toolgun"] = 2,
+	["PlayerUse"] = 3,
+	["EntityDamage"] = 4
+}
+
+function FPP.entGetTouchReason(ent, touchType)
+	local idx = FPP.entTouchReasons[ent:EntIndex()] or 0
 	ent.FPPCanTouchWhy = idx
 
-	return ent.FPPCanTouchWhy
+	if not touchType then
+		return ent.FPPCanTouchWhy
+	end
+
+	local maxReasonValue = 15
+	local reasonNr = bit.band(idx, bit.lshift(maxReasonValue, reasonSize * touchTypeMultiplier[touchType]))
+	local reason = reasons[reasonNr]
+
+	if reasonNr == 1 then -- convert owner to the actual player
+		local owner = ent:CPPIGetOwner()
+		reason = IsValid(owner) and owner:Nick() or "Unknown player"
+	end
+
+	return reason
 end
