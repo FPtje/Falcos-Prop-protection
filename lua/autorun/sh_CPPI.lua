@@ -35,7 +35,7 @@ end
 
 local ENTITY = FindMetaTable("Entity")
 function ENTITY:CPPIGetOwner()
-	local Owner = self.FPPOwner
+	local Owner = FPP.entGetOwner(self)
 	if not IsValid(Owner) or not Owner:IsPlayer() then return Owner, self.FPPOwnerID end
 	return Owner, Owner:UniqueID()
 end
@@ -44,15 +44,20 @@ if SERVER then
 	function ENTITY:CPPISetOwner(ply)
 		self.FPPOwner = ply
 		self.FPPOwnerID = ply:SteamID()
-		if constraint.HasConstraints( self ) then
-			local ConstrainedEntities = constraint.GetAllConstrainedEntities( self )
+		/*local ConstrainedEntities
+		if constraint.HasConstraints(self) then
+			ConstrainedEntities = constraint.GetAllConstrainedEntities(self)
 			for _,ent in pairs(ConstrainedEntities) do
 				if IsValid(ent) then
 					ent.FPPOwner = ply
 					ent.FPPOwnerID = ply:SteamID()
 				end
 			end
-		end		
+		end*
+		ConstrainedEntities = ConstrainedEntities or {}
+		ConstrainedEntities[self] = self*/
+
+		FPP.recalculateCanTouch(player.GetAll(), {ply})
 		return true
 	end
 

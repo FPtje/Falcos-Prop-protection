@@ -164,10 +164,10 @@ local function HUDPaint()
 
 	--Show the owner:
 	local LAEnt = LocalPlayer():GetEyeTraceNoCursor().Entity
-	if IsValid(LAEnt) and LAEnt.FPPCanTouch ~= nil and LAEnt.FPPOwner then
+	if IsValid(LAEnt) and LAEnt.FPPCanTouch ~= nil and LAEnt.FPPTouchReason then
 
 		surface.SetFont("Default")
-		local w,h = surface.GetTextSize(LAEnt.FPPOwner)
+		local w,h = surface.GetTextSize(LAEnt.FPPTouchReason)
 		local col = LAEnt.FPPCanTouch and Color(0,255,0,255) or Color(255,0,0,255)
 
 		if comingAroundAgain < w then
@@ -175,21 +175,21 @@ local function HUDPaint()
 		end
 
 		draw.RoundedBox(4, comingAroundAgain - w, ScrH()/2 - h - 2, w + 10, 20, Color(0, 0, 0, 110))
-		draw.DrawText(LAEnt.FPPOwner, "Default", 5 - w + comingAroundAgain, ScrH()/2 - h, col, 0)
+		draw.DrawText(LAEnt.FPPTouchReason, "Default", 5 - w + comingAroundAgain, ScrH()/2 - h, col, 0)
 		surface.SetDrawColor(255,255,255,255)
 	elseif not IsValid(LAEnt) then
 		comingAroundAgain = 0
 	end
 
 	-- Messsage when you can't touch something
-	if TouchAlpha > 0 and LAEnt.FPPOwner then
+	if TouchAlpha > 0 and LAEnt.FPPTouchReason then
 		surface.SetDrawColor(255,255,255,TouchAlpha)
 
 		surface.SetFont("Default")
-		local w,h = surface.GetTextSize(LAEnt.FPPOwner)
+		local w,h = surface.GetTextSize(LAEnt.FPPTouchReason)
 		local col = cantouch and Color(0,255,0,255) or Color(255,0,0,255)
 
-		draw.WordBox(4, ScrW()/2 - 0.51*w, ScrH()/2 + h, LAEnt.FPPOwner, "Default", Color(0, 0, 0, 110), col)
+		draw.WordBox(4, ScrW()/2 - 0.51*w, ScrH()/2 + h, LAEnt.FPPTouchReason, "Default", Color(0, 0, 0, 110), col)
 	end
 
 	if not HUDNotes then return end

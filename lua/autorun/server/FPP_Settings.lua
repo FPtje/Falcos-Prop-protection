@@ -8,6 +8,7 @@ include("FPP_MySQLCore.lua")
 AddCSLuaFile("autorun/client/fpp_menu.lua")
 AddCSLuaFile("autorun/client/fpp_hud.lua")
 AddCSLuaFile("autorun/client/fpp_buddies.lua")
+AddCSLuaFile("autorun/client/fpp_ownabilitycl.lua")
 AddCSLuaFile("autorun/sh_cppi.lua")
 AddCSLuaFile("autorun/sh_settings.lua")
 
@@ -66,6 +67,8 @@ local function FPP_SetSetting(ply, cmd, args)
 
 		FPP.NotifyAll(((ply.Nick and ply:Nick()) or "Console").. " set ".. string.lower(string.gsub(args[1], "FPP_", "")) .. " "..args[2].." to " .. tostring(args[3]), util.tobool(tonumber(args[3])))
 	end)
+
+	FPP.recalculateCanTouch(player.GetAll(), ents.GetAll())
 end
 concommand.Add("FPP_setting", FPP_SetSetting)
 
@@ -98,6 +101,8 @@ local function AddBlocked(ply, cmd, args)
 
 		FPP.NotifyAll(((ply.Nick and ply:Nick()) or "Console").. " added ".. args[2] .. " to the "..args[1] .. " black/whitelist", true)
 	end)
+
+	FPP.recalculateCanTouch(player.GetAll(), ents.FindByClass(args[2]))
 end
 concommand.Add("FPP_AddBlocked", AddBlocked)
 
@@ -125,6 +130,7 @@ local function RemoveBlocked(ply, cmd, args)
 
 	FPPDB.Query("DELETE FROM FPP_BLOCKED1 WHERE var = "..sql.SQLStr(args[1]) .. " AND setting = "..sql.SQLStr(args[2])..";")
 	FPP.NotifyAll(((ply.Nick and ply:Nick()) or "Console").. " removed ".. args[2] .. " from the "..args[1] .. " black/whitelist", false)
+	FPP.recalculateCanTouch(player.GetAll(), ents.FindByClass(args[2]))
 end
 concommand.Add("FPP_RemoveBlocked", RemoveBlocked)
 
@@ -154,7 +160,7 @@ local function ShareProp(ply, cmd, args)
 	if not args[1] or not IsValid(Entity(args[1])) or not args[2] then FPP.Notify(ply, "Argument(s) invalid", false) return end
 	local ent = Entity(args[1])
 
-	if not FPP.PlayerCanTouchEnt(ply, ent, "Toolgun1", "FPP_TOOLGUN1", true) then --Note: This returns false when it's someone elses shared entity, so that's not a glitch
+	if ent:CPPIGetOwner() ~= ply then
 		FPP.Notify(ply, "You do not have the right to share this entity.", false)
 		return
 	end
@@ -184,6 +190,8 @@ local function ShareProp(ply, cmd, args)
 			end
 		end
 	end
+
+	FPP.recalculateCanTouch(player.GetAll(), {ent})
 end
 concommand.Add("FPP_ShareProp", ShareProp)
 
@@ -640,6 +648,14 @@ local function SetBuddy(ply, cmd, args)
 	ply.Buddies = ply.Buddies or {}
 	for k,v in pairs(args) do args[k] = tonumber(v) end
 	ply.Buddies[buddy] = {physgun1 = util.tobool(args[2]), gravgun1 = util.tobool(args[3]), toolgun1 = util.tobool(args[4]), playeruse1 = util.tobool(args[5]), entitydamage1 = util.tobool(args[6])}
+
+	local affectedProps = {}
+	for k,v in pairs(ents.GetAll()) do
+		local owner = v:CPPIGetOwner()
+		if owner ~= ply then continue end
+		table.insert(affectedProps, v)
+	end
+	FPP.recalculateCanTouch({buddy}, affectedProps)
 end
 concommand.Add("FPP_SetBuddy", SetBuddy)
 
