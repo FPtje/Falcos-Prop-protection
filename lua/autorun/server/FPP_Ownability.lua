@@ -60,8 +60,7 @@ local reasonNumbers = {
 Utility functions
 ---------------------------------------------------------------------------*/
 local function getPlySetting(ply, settingName)
-	local info = ply:GetInfo(settingName)
-	return info ~= "" and tobool(info)
+	return ply[settingName] or ply:GetInfo(settingName) == "1"
 end
 
 local function getSetting(touchType)
@@ -85,7 +84,7 @@ local hardWhiteListed = { -- things that mess up when not allowed
 local function calculateCanTouchForType(ply, ent, touchType)
 	if not IsValid(ent) then return false, 0 end
 
-	local isAdmin = ply:IsAdmin()
+	local isAdmin = ply.FPPIsAdmin or ply:IsAdmin() -- small optimisation
 	local class = ent:GetClass()
 	local owner = ent:CPPIGetOwner()
 	local setting, tablename = getSetting(touchType)
@@ -141,6 +140,15 @@ local function calculateCanTouchForType(ply, ent, touchType)
 	return isAdmin and adminProps and not noTouchOtherPlayerProps, reasonNumbers.owner
 end
 
+local blockedEnts = {
+	["env_sprite"] = true,
+	["ambient_generic"] = true,
+	["ai_network"] = true,
+	["player_manager"] = true,
+	["gmod_gamerules"] = true,
+	["bodyqueue"] = true,
+	["phys_bone_follower"] = true,
+}
 function FPP.calculateCanTouch(ply, ent)
 	local canTouch = 0
 
@@ -170,19 +178,38 @@ end
 
 -- try not to call this with both player.GetAll() and ents.GetAll()
 function FPP.recalculateCanTouch(players, entities)
+	for k,v in pairs(entities) do
+		if not IsValid(v) then entities[k] = nil continue end
+		if v:GetSolid() == 0 or v:IsEFlagSet(EFL_SERVER_ONLY) then entities[k] = nil continue end
+		if not v:GetPhysicsObject():IsValid() then entities[k] = nil continue end
+		if blockedEnts[v:GetClass()] then entities[k] = nil continue end
+	end
+
 	for _, ply in pairs(players) do
 		if not IsValid(ply) then continue end
+		// optimisations
+		ply.FPPIsAdmin = ply:IsAdmin()
+		ply.FPP_PrivateSettings_OtherPlayerProps = ply:GetInfo("FPP_PrivateSettings_OtherPlayerProps")
+		ply.FPP_PrivateSettings_Players = ply:GetInfo("FPP_PrivateSettings_Players")
+		ply.FPP_PrivateSettings_BlockedProps = ply:GetInfo("FPP_PrivateSettings_BlockedProps")
+		ply.FPP_PrivateSettings_OwnProps = ply:GetInfo("FPP_PrivateSettings_OwnProps")
+		ply.FPP_PrivateSettings_WorldProps = ply:GetInfo("FPP_PrivateSettings_WorldProps")
 		local changed = {}
 
 		for _, ent in pairs(entities) do
-			if not IsValid(ent) then continue end
-			if ent:GetSolid() == 0 or ent:IsEFlagSet(EFL_SERVER_ONLY) then continue end
-
 			local hasChanged = FPP.calculateCanTouch(ply, ent)
 			if hasChanged then table.insert(changed, ent) end
 		end
 
 		FPP.plySendTouchData(ply, changed)
+
+		// end optimisations
+		ply.FPP_PrivateSettings_OtherPlayerProps = nil
+		ply.FPP_PrivateSettings_Players = nil
+		ply.FPP_PrivateSettings_BlockedProps = nil
+		ply.FPP_PrivateSettings_OwnProps = nil
+		ply.FPP_PrivateSettings_WorldProps = nil
+		ply.FPPIsAdmin = nil
 	end
 end
 

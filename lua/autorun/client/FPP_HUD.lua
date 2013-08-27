@@ -190,6 +190,7 @@ local function HUDPaint()
 
 	local touchType = weaponClassTouchTypes[class] or "EntityDamage"
 	local reason = FPP.entGetTouchReason(LAEnt, touchType)
+	if not reason then return end
 
 	surface.SetFont("Default")
 	local w,h = surface.GetTextSize(reason)

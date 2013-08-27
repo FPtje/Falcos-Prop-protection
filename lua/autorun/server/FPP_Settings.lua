@@ -797,6 +797,23 @@ local function RestrictToolPerson(ply, cmd, args)
 end
 concommand.Add("FPP_restricttoolplayer", RestrictToolPerson)
 
+
+local resetPlayerSettingsTimer = function(ply)
+	local entities = {}
+	for k,v in pairs(ents.GetAll()) do
+		local owner = v:CPPIGetOwner()
+		if ply == ply then table.insert(entities, v) end
+	end
+	FPP.recalculateCanTouch({ply}, entities)
+end
+
+local function refreshPrivatePlayerSettings(ply)
+	timer.Destroy("FPP_RefreshPrivatePlayerSettings" .. ply:EntIndex())
+
+	timer.Create("FPP_RefreshPrivatePlayerSettings" .. ply:EntIndex(), 4, 1, function() resetPlayerSettingsTimer(ply) end)
+end
+concommand.Add("_FPP_RefreshPrivatePlayerSettings", refreshPrivatePlayerSettings)
+
 /*---------------------------------------------------------------------------
 Load all FPP settings
 ---------------------------------------------------------------------------*/

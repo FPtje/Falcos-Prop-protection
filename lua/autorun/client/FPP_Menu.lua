@@ -1038,7 +1038,19 @@ function FPP.PrivateSettings(Panel)
 	//PrivateSettingsPanel = PrivateSettingsPanel or Panel
 	Panel:AddControl("Label", {Text = "\nPrivate settings menu\nUse to set settings that override server settings\n\nThese settings can only restrict you further.\n"})
 	for k,v in pairs(PrivateSettings) do
-		Panel:AddControl("CheckBox", {Label = "I don't want to "..k, Command = "FPP_PrivateSettings_"..v})
+		local box = vgui.Create("DCheckBoxLabel")
+		box:SetText("I don't want to "..k)
+		box:SetValue(tobool(GetConVarNumber("FPP_PrivateSettings_"..v)))
+		box:SetDark(true)
+		local toggle = box.Button.Toggle
+		box.Button.Toggle = function(self)
+			toggle(self)
+			RunConsoleCommand("_FPP_RefreshPrivatePlayerSettings")
+		end
+		box:SizeToContents()
+
+		//Panel:AddControl("CheckBox", {Label = "I don't want to "..k, Command = "FPP_PrivateSettings_"..v})
+		Panel:AddItem(box)
 	end
 	Panel:AddControl("CheckBox", {Label = "I want to pick up players", Command = "cl_pickupplayers"})
 end
