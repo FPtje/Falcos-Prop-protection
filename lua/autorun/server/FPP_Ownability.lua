@@ -422,7 +422,7 @@ end
 
 local entMem = {}
 local function constraintRemovedTimer(ent1, ent2, constrainedEnts)
-	if not IsValid(ent1) and not IsValid(ent2) then return end
+	if not IsValid(ent1) and not IsValid(ent2) or not constrainedEnts then return end
 
 	updateConstrainedGroupsRestricted(constrainedEnts)
 	entMem = {}
@@ -432,6 +432,7 @@ local function handleConstraintRemoved(ent)
 	local ent1, ent2 = ent:GetConstrainedEntities()
 	ent1, ent2 = ent1 or ent.Ent1, ent2 or ent.Ent2
 
+	if not IsValid(ent1) or not IsValid(ent2) then return end
 	-- prevent the function from being called too often when many constraints are removed at once
 	if entMem[ent1] or entMem[ent2] then return end
 	entMem[ent1] = true
