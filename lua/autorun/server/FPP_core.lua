@@ -646,11 +646,19 @@ function FPP.PlayerInitialSpawn(ply)
 	end)
 
 	if FPP.DisconnectedPlayers[ply:SteamID()] then -- Check if the player has rejoined within the auto remove time
+		local entities = {}
+		local allEnts = {}
 		for k,v in pairs(ents.GetAll()) do
 			if IsValid(v) and v.FPPOwnerID == ply:SteamID() then
 				v:CPPISetOwner(ply)
+				table.insert(entities, v)
+			else
+				table.insert(allEnts, v)
 			end
 		end
+
+		FPP.recalculateCanTouch(player.GetAll(), entities)
+		FPP.recalculateCanTouch({ply}, allEnts)
 	end
 end
 hook.Add("PlayerInitialSpawn", "FPP.PlayerInitialSpawn", FPP.PlayerInitialSpawn)

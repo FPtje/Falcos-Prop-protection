@@ -453,7 +453,7 @@ hook.Add("EntityRemoved", "FPP_OnEntityRemoved", onEntityRemoved)
 Player initialspawn
 ---------------------------------------------------------------------------*/
 -- Send all information on PlayerInitialSpawn
-local function onInitialSpawn(ply)
+/*local function onInitialSpawn(ply)
 	local sendEnts = {}
 
 	for k, ent in pairs(ents.GetAll()) do
@@ -466,7 +466,7 @@ local function onInitialSpawn(ply)
 
 	FPP.plySendTouchData(ply, sendEnts)
 end
-hook.Add("PlayerInitialSpawn", "FPP_InitialSpawn", onInitialSpawn)
+hook.Add("PlayerInitialSpawn", "FPP_InitialSpawn", onInitialSpawn)*/
 
 /*---------------------------------------------------------------------------
 Player disconnected
