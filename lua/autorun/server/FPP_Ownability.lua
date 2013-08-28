@@ -274,6 +274,7 @@ local function handleConstraintCreation(ent)
 	local ent1, ent2 = ent:GetConstrainedEntities()
 	ent1, ent2 = ent1 or ent.Ent1, ent2 or ent.Ent2
 
+	if not ent1.FPPCanTouch or not ent2.FPPCanTouch then return end
 	local reason = 0
 	local i = 0
 	for Bit, touchType in pairs(touchTypeNumbers) do
