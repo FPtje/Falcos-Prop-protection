@@ -60,7 +60,7 @@ local reasonNumbers = {
 Utility functions
 ---------------------------------------------------------------------------*/
 local function getPlySetting(ply, settingName)
-	return ply[settingName] or ply:GetInfo(settingName) == "1"
+	return (ply[settingName] or ply:GetInfo(settingName)) == "1"
 end
 
 local function getSetting(touchType)
@@ -95,7 +95,7 @@ local function calculateCanTouchForType(ply, ent, touchType)
 	if hardWhiteListed[class] then return true, reasonNumbers.world end
 
 	-- picking up players
-	if touchType == "Physgun" and ent:IsPlayer() and not getPlySetting(ply, "FPP_PrivateSettings_Players") then
+	if touchType == "Physgun" and ent:IsPlayer() and not getPlySetting(ply, "cl_pickupplayers") then
 		return false, reasonNumbers.player
 	end
 
@@ -190,7 +190,7 @@ function FPP.recalculateCanTouch(players, entities)
 		// optimisations
 		ply.FPPIsAdmin = ply:IsAdmin()
 		ply.FPP_PrivateSettings_OtherPlayerProps = ply:GetInfo("FPP_PrivateSettings_OtherPlayerProps")
-		ply.FPP_PrivateSettings_Players = ply:GetInfo("FPP_PrivateSettings_Players")
+		ply.cl_pickupplayers = ply:GetInfo("cl_pickupplayers")
 		ply.FPP_PrivateSettings_BlockedProps = ply:GetInfo("FPP_PrivateSettings_BlockedProps")
 		ply.FPP_PrivateSettings_OwnProps = ply:GetInfo("FPP_PrivateSettings_OwnProps")
 		ply.FPP_PrivateSettings_WorldProps = ply:GetInfo("FPP_PrivateSettings_WorldProps")
@@ -205,7 +205,7 @@ function FPP.recalculateCanTouch(players, entities)
 
 		// end optimisations
 		ply.FPP_PrivateSettings_OtherPlayerProps = nil
-		ply.FPP_PrivateSettings_Players = nil
+		ply.cl_pickupplayers = nil
 		ply.FPP_PrivateSettings_BlockedProps = nil
 		ply.FPP_PrivateSettings_OwnProps = nil
 		ply.FPP_PrivateSettings_WorldProps = nil

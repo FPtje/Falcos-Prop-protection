@@ -33,13 +33,13 @@ end
 net.Receive("FPP_TouchNotification", CanTouch)
 
 hook.Add("CanTool", "FPP_CL_CanTool", function(ply, trace, tool) -- Prevent client from SEEING his toolgun shoot while it doesn't shoot serverside.
-	if not FPP.canTouchEnt(ply, "Toolgun") then
+	if IsValid(trace.Entity) and not FPP.canTouchEnt(trace.Entity, "Toolgun") then
 		return false
 	end
 end)
 
 hook.Add("PhysgunPickup", "FPP_CL_PhysgunPickup", function(ply, ent)
-	if not FPP.canTouchEnt(ply, "Physgun") then
+	if not FPP.canTouchEnt(ent, "Physgun") then
 		return false
 	end
 end)--This looks weird, but whenever a client touches an ent he can't touch, without the code it'll look like he picked it up. WITH the code it really looks like he can't
@@ -160,7 +160,6 @@ local function HUDPaint()
 		draw.WordBox(4, ScrW()/2 - 0.51*w, ScrH()/2 + h, touchreason, "Default", Color(0, 0, 0, 110), col)
 	end
 
-	if not HUDNotes then return end
 	local i = 0
 	for k, v in pairs(HUDNotes) do
 		if v ~= 0 then

@@ -1042,9 +1042,10 @@ function FPP.PrivateSettings(Panel)
 		box:SetText("I don't want to "..k)
 		box:SetValue(tobool(GetConVarNumber("FPP_PrivateSettings_"..v)))
 		box:SetDark(true)
-		local toggle = box.Button.Toggle
+
 		box.Button.Toggle = function(self)
-			toggle(self)
+			RunConsoleCommand("FPP_PrivateSettings_"..v, self:GetChecked() and "0" or "1")
+			self:SetValue(not self:GetChecked())
 			RunConsoleCommand("_FPP_RefreshPrivatePlayerSettings")
 		end
 		box:SizeToContents()
