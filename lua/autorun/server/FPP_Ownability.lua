@@ -356,7 +356,7 @@ end)
 On entity removed
 ---------------------------------------------------------------------------*/
 -- Update constraints, O(players * (entities + constraints))
-function updateConstrainedGroupsRestricted(entities)
+local function updateConstrainedGroupsRestricted(entities)
 	for i, ent in pairs(entities) do
 		if not IsValid(ent) then
 			entities[i] = nil

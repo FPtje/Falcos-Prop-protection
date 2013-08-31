@@ -47,7 +47,7 @@ end
 
 function FPP.canTouchEnt(ent, touchType)
 	ent.FPPCanTouch = FPP.entTouchability[ent:EntIndex()]
-	if not touchType then
+	if not touchType or not ent.FPPCanTouch then
 		return ent.FPPCanTouch
 	end
 
