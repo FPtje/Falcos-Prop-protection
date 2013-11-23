@@ -160,22 +160,6 @@ local touchTypes = {
 	PlayerUse = 8,
 	EntityDamage = 16
 }
-util.AddNetworkString("FPP_TouchNotification")
-function FPP.touchNotification(ply, Type, ent)
-	local settingType = string.upper("FPP_"..Type.."1")
-
-	if not IsValid(ply) or tobool(FPP.Settings[settingType].shownocross) or getPlySetting(ply, "FPP_PrivateSettings_ShowIcon") then return false end
-
-	if ply.FPP_LastCanTouch and ply.FPP_LastCanTouch > CurTime() - 2 then return end
-	ply.FPP_LastCanTouch = CurTime()
-
-	net.Start("FPP_TouchNotification", ply)
-		net.WriteEntity(ent)
-		net.WriteUInt(touchTypes[Type], 5)
-	net.Send(ply)
-
-	return Toggle, Owner
-end
 
 --------------------------------------------------------------------------------------
 --The protecting itself
@@ -186,7 +170,7 @@ FPP.Protect = {}
 --Physgun Pickup
 function FPP.Protect.PhysgunPickup(ply, ent)
 	if not tobool(FPP.Settings.FPP_PHYSGUN1.toggle) then if FPP.UnGhost then FPP.UnGhost(ply, ent) end return end
-	if not ent:IsValid() then return FPP.touchNotification(ply, "Physgun", ent) end
+	if not ent:IsValid() then return end
 
 	if type(ent.PhysgunPickup) == "function" then
 		local val = ent:PhysgunPickup(ply, ent)
@@ -198,9 +182,6 @@ function FPP.Protect.PhysgunPickup(ply, ent)
 	if ent:IsPlayer() then return end
 
 	local cantouch = FPP.plyCanTouchEnt(ply, ent, "Physgun")
-	if not cantouch then
-		FPP.touchNotification(ply, "Physgun", ent)
-	end
 
 	if cantouch and FPP.UnGhost then
 		FPP.UnGhost(ply, ent)
@@ -226,9 +207,7 @@ function FPP.Protect.PhysgunReload(weapon, ply)
 	end
 
 	local cantouch = FPP.plyCanTouchEnt(ply, ent, "Physgun")
-	if not cantouch then
-		FPP.touchNotification(ply, "Physgun", ent)
-	end
+
 
 	if not cantouch then return false end
 	return --If I return true, I will break the double reload
@@ -265,9 +244,7 @@ function FPP.Protect.GravGunPickup(ply, ent)
 	end
 
 	local cantouch = FPP.plyCanTouchEnt(ply, ent, "Gravgun")
-	if not cantouch then
-		FPP.touchNotification(ply, "Gravgun", ent)
-	end
+
 
 	if FPP.UnGhost and cantouch then FPP.UnGhost(ply, ent) end
 	if cantouch == false then DropEntityIfHeld(ent) end
@@ -279,7 +256,7 @@ hook.Add("GravGunOnPickedUp", "FPP.Protect.GravGunPickup", FPP.Protect.GravGunPi
 function FPP.Protect.GravGunPunt(ply, ent)
 	if tobool(FPP.Settings.FPP_GRAVGUN1.noshooting) then DropEntityIfHeld(ent) return false end
 
-	if not IsValid(ent) then DropEntityIfHeld(ent) return FPP.touchNotification(ply, "Gravgun", "Not valid!", false) end
+	if not IsValid(ent) then DropEntityIfHeld(ent) return end
 
 	if type(ent.GravGunPunt) == "function" then
 		local val = ent:GravGunPunt(ply, ent)
@@ -293,9 +270,7 @@ function FPP.Protect.GravGunPunt(ply, ent)
 	end
 
 	local cantouch = FPP.plyCanTouchEnt(ply, ent, "Gravgun")
-	if not cantouch then
-		FPP.touchNotification(ply, "Gravgun", ent)
-	end
+
 
 	if FPP.UnGhost and cantouch then FPP.UnGhost(ply, ent) end
 	if cantouch == false then DropEntityIfHeld(ent) end
@@ -307,7 +282,7 @@ hook.Add("GravGunPunt", "FPP.Protect.GravGunPunt", FPP.Protect.GravGunPunt)
 function FPP.Protect.PlayerUse(ply, ent)
 	if not tobool(FPP.Settings.FPP_PLAYERUSE1.toggle) then return end
 
-	if not IsValid(ent) then return FPP.touchNotification(ply, "PlayerUse", ent) end
+	if not IsValid(ent) then return end
 
 	if type(ent.PlayerUse) == "function" then
 		local val = ent:PlayerUse(ply, ent)
@@ -317,9 +292,6 @@ function FPP.Protect.PlayerUse(ply, ent)
 	end
 
 	local cantouch = FPP.plyCanTouchEnt(ply, ent, "PlayerUse")
-	if not cantouch then
-		FPP.touchNotification(ply, "PlayerUse", ent)
-	end
 
 	if FPP.UnGhost and cantouch then FPP.UnGhost(ply, ent) end
 	return cantouch
@@ -348,9 +320,7 @@ function FPP.Protect.EntityDamage(ent, dmginfo)
 		local entOwner = ent:CPPIGetOwner()
 		if IsValid(attackerOwner) and IsValid(entOwner) then
 			local cantouch = FPP.plyCanTouchEnt(attackerOwner, ent, "EntityDamage")
-			if not cantouch then
-				FPP.touchNotification(attackerOwner, "EntityDamage", ent)
-			end
+
 			if not cantouch then
 				dmginfo:SetDamage(0)
 				ent.FPPAntiDamageWorld = ent.FPPAntiDamageWorld or 0
@@ -376,12 +346,8 @@ function FPP.Protect.EntityDamage(ent, dmginfo)
 	if ent:IsPlayer() then return end
 
 	local cantouch = FPP.plyCanTouchEnt(attacker, ent, "EntityDamage")
-	if not cantouch then
-		FPP.touchNotification(attacker, "EntityDamage", ent)
-	end
 
 	if not cantouch then dmginfo:SetDamage(0) end
-	return
 end
 hook.Add("EntityTakeDamage", "FPP.Protect.EntityTakeDamage", FPP.Protect.EntityDamage)
 
@@ -535,9 +501,7 @@ function FPP.Protect.CanTool(ply, trace, tool, ENT)
 
 	if tobool(FPP.Settings.FPP_TOOLGUN1.toggle) and IsValid(ent) then
 		local cantouch = FPP.plyCanTouchEnt(ply, ent, "Toolgun")
-		if not cantouch then
-			FPP.touchNotification(ply, "Toolgun", ent)
-		end
+
 		if not cantouch then return false end
 	end
 
@@ -587,9 +551,7 @@ hook.Add("CanTool", "FPP.Protect.CanTool", FPP.Protect.CanTool)
 function FPP.Protect.CanProperty(ply, property, ent)
 	-- Use physgun because I'm way too lazy to make a new type
 	local cantouch = FPP.plyCanTouchEnt(ply, ent, "Physgun")
-	if not cantouch then
-		FPP.touchNotification(ply, "Physgun", ent)
-	end
+
 	if not cantouch then return false end
 end
 hook.Add("CanProperty", "FPP.Protect.CanProperty", FPP.Protect.CanProperty)
@@ -597,9 +559,7 @@ hook.Add("CanProperty", "FPP.Protect.CanProperty", FPP.Protect.CanProperty)
 function FPP.Protect.CanDrive(ply, ent)
 	-- Use physgun because I'm way too lazy to make a new type
 	local cantouch = FPP.plyCanTouchEnt(ply, ent, "Physgun")
-	if not cantouch then
-		FPP.touchNotification(ply, "Physgun", ent)
-	end
+
 	if not cantouch then return false end
 end
 hook.Add("CanDrive", "FPP.Protect.CanDrive", FPP.Protect.CanDrive)

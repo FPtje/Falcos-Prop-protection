@@ -7,10 +7,6 @@ surface.CreateFont("TabLarge", {
 	shadow = false,
 	font = "Trebuchet MS"})
 
-local TouchAlpha = 0
-
-local warningEnt, warningType
-
 local touchTypeNumbers = {
 	[1] = "Physgun",
 	[2] = "Gravgun",
@@ -18,19 +14,6 @@ local touchTypeNumbers = {
 	[8] = "PlayerUse",
 	[16] = "EntityDamage"
 }
--- Can/can not touch sir!
-local function CanTouch(um)
-	if TouchAlpha > 0 then return end
-	warningEnt = net.ReadEntity()
-	warningType = net.ReadUInt(5)
-
-	TouchAlpha = 255
-	timer.Simple(1, function()
-		TouchAlpha = 0
-		warningEnt = nil
-	end)
-end
-net.Receive("FPP_TouchNotification", CanTouch)
 
 hook.Add("CanTool", "FPP_CL_CanTool", function(ply, trace, tool) -- Prevent client from SEEING his toolgun shoot while it doesn't shoot serverside.
 	if IsValid(trace.Entity) and not FPP.canTouchEnt(trace.Entity, "Toolgun") then
@@ -148,17 +131,6 @@ local weaponClassTouchTypes = {
 
 local comingAroundAgain = 0
 local function HUDPaint()
-	-- Messsage when you can't touch something
-	if TouchAlpha > 0 and IsValid(warningEnt) then
-		surface.SetDrawColor(255, 255, 255, TouchAlpha)
-
-		surface.SetFont("Default")
-		local touchreason = FPP.entGetTouchReason(warningEnt, "Physgun")
-		local w,h = surface.GetTextSize(touchreason)
-		local col = Color(255,0,0,255)
-
-		draw.WordBox(4, ScrW()/2 - 0.51*w, ScrH()/2 + h, touchreason, "Default", Color(0, 0, 0, 110), col)
-	end
 
 	local i = 0
 	for k, v in pairs(HUDNotes) do
