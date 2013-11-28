@@ -451,25 +451,6 @@ end
 hook.Add("EntityRemoved", "FPP_OnEntityRemoved", onEntityRemoved)
 
 /*---------------------------------------------------------------------------
-Player initialspawn
----------------------------------------------------------------------------*/
--- Send all information on PlayerInitialSpawn
-/*local function onInitialSpawn(ply)
-	local sendEnts = {}
-
-	for k, ent in pairs(ents.GetAll()) do
-		if not IsValid(ent) then continue end
-		FPP.calculateCanTouch(ply, ent)
-		if ent:GetSolid() == 0 or ent:IsEFlagSet(EFL_SERVER_ONLY) then continue end
-
-		table.insert(sendEnts, ent)
-	end
-
-	FPP.plySendTouchData(ply, sendEnts)
-end
-hook.Add("PlayerInitialSpawn", "FPP_InitialSpawn", onInitialSpawn)*/
-
-/*---------------------------------------------------------------------------
 Player disconnected
 ---------------------------------------------------------------------------*/
 local function playerDisconnected(ply)
