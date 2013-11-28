@@ -1,5 +1,6 @@
 FPP = FPP or {}
 local plyMeta = FindMetaTable("Player")
+local entMeta = FindMetaTable("Entity")
 -- lua_run print(Player(2):GetEyeTrace().Entity.FPPCanTouch[Player(2)], Player(2):GetEyeTrace().Entity.FPPCanTouchWhy[Player(2)])
 -- lua_run FPP.calculateCanTouch(Player(2), Player(2):GetEyeTrace().Entity)
 -- lua_openscript autorun/server/FPP_Ownability.lua;clear
@@ -469,10 +470,32 @@ hook.Add("PlayerDisconnected", "FPP_PlayerDisconnected", playerDisconnected)
 Usergroup changed
 ---------------------------------------------------------------------------*/
 local setUserGroup = plyMeta.SetUserGroup
-function plyMeta:SetUserGroup(group)
+local function userGroupRecalculate(ply)
+	if not IsValid(ply) or not ply:IsPlayer() then return end
+
 	timer.Simple(0, function()
-		FPP.recalculateCanTouch({self}, ents.GetAll())
+		FPP.recalculateCanTouch({ply}, ents.GetAll())
 	end)
+end
+
+function plyMeta:SetUserGroup(group)
+	userGroupRecalculate(self)
 
 	return setUserGroup(self, group)
+end
+
+local oldSetNWString = entMeta.SetNWString
+function entMeta:SetNWString(str, val)
+	if str ~= "usergroup" then return oldSetNWString(self, str, val) end
+
+	userGroupRecalculate(self)
+	return oldSetNWString(self, str, val)
+end
+
+local oldSetNetworkedString = entMeta.SetNetworkedString
+function entMeta:SetNetworkedString(str, val)
+	if str ~= "usergroup" then return oldSetNetworkedString(self, str, val) end
+
+	userGroupRecalculate(self)
+	return oldSetNetworkedString(self, str, val)
 end
