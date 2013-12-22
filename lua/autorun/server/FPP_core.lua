@@ -10,13 +10,13 @@ local function isBlocked(model)
 		not tobool(FPP.Settings.FPP_BLOCKMODELSETTINGS1.toggle)
 		or not FPP.BlockedModels or not model then return end
 
-	if string.find(model, "../", 1, true) then
-		return true, "The model path goes up in the folder tree."
-	end
-
 	model = string.lower(model or "")
 	model = string.Replace(model, "\\", "/")
 	model = string.gsub(model, "[\\/]+", "/")
+
+	if string.find(model, "../", 1, true) then
+		return true, "The model path goes up in the folder tree."
+	end
 
 	local found = FPP.BlockedModels[model]
 	if tobool(FPP.Settings.FPP_BLOCKMODELSETTINGS1.iswhitelist) and not found then
@@ -640,6 +640,11 @@ function ENTITY:FireBullets(bullet, ...)
 end
 
 hook.Add("EntityRemoved","jeepWorkaround",function(ent)
+	-- Crash workaround, calling IsValid on "Vehicle [DELETED]" will crash the game (gm_mobenix)
+	if string.find(tostring(ent), "DELETED") then
+		return
+	end
+
     if IsValid(ent) and ent:IsVehicle() and ent.GetPassenger and IsValid(ent:GetPassenger(1)) then
         ent:GetPassenger(1):ExitVehicle()
     end
