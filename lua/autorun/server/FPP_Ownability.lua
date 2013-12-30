@@ -122,6 +122,9 @@ local function calculateCanTouchForType(ply, ent, touchType)
 	-- Shared entity
 	if ent["Share"..setting] then return not noTouchOtherPlayerProps, reasonNumbers.shared end
 
+	-- Player is buddies with the owner of the entity
+	if IsValid(owner) and owner.Buddies and owner.Buddies[ply] and owner.Buddies[ply][touchType] then return not noTouchOtherPlayerProps, reasonNumbers.buddy end
+
 	-- World prop
 	local adminWorldProps = tobool(FPPSettings.adminworldprops)
 	local peopleWorldProps = tobool(FPPSettings.worldprops)

@@ -696,7 +696,7 @@ local function SetBuddy(ply, cmd, args)
 
 	ply.Buddies = ply.Buddies or {}
 	for k,v in pairs(args) do args[k] = tonumber(v) end
-	ply.Buddies[buddy] = {physgun1 = util.tobool(args[2]), gravgun1 = util.tobool(args[3]), toolgun1 = util.tobool(args[4]), playeruse1 = util.tobool(args[5]), entitydamage1 = util.tobool(args[6])}
+	ply.Buddies[buddy] = {Physgun = util.tobool(args[2]), Gravgun = util.tobool(args[3]), Toolgun = util.tobool(args[4]), PlayerUse = util.tobool(args[5]), EntityDamage = util.tobool(args[6])}
 
 	local affectedProps = {}
 	for k,v in pairs(ents.GetAll()) do
