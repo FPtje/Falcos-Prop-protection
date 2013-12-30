@@ -404,7 +404,7 @@ local function updateConstrainedGroupsRestricted(entities)
 
 				black[value] = true
 				discovered[value] = true
-				FPP_CanTouch = bit.band(FPP_CanTouch, value.FPPCanTouch[ply])
+				FPP_CanTouch = bit.band(FPP_CanTouch or 0, value.FPPCanTouch[ply])
 			end
 
 			-- now update the ents to the client
