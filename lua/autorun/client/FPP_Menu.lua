@@ -249,7 +249,7 @@ function FPP.AdminMenu(Panel)
 	damage:Add(antiDMGLabel)
 
 	addchk("Damage protection enabled", {"FPP_ENTITYDAMAGE1", "toggle"}, damage)
-	addchk("Prop damage protection", {"FPP_ENTITYDAMAGE1", "protectpropdamage"}, damage)
+	addchk("Protect against damage by props", {"FPP_ENTITYDAMAGE1", "protectpropdamage"}, damage)
 	addchk("Admins can damage all entities", {"FPP_ENTITYDAMAGE1", "adminall"}, damage)
 	addchk("People can damage world entities", {"FPP_ENTITYDAMAGE1", "worldprops"}, damage)
 	addchk("Admins can damage world entities", {"FPP_ENTITYDAMAGE1", "adminworldprops"}, damage)
