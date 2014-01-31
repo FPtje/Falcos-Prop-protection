@@ -46,6 +46,10 @@ databaseObject = nil
 
 local queuedQueries
 
+function isMySQL()
+	return CONNECTED_TO_MYSQL
+end
+
 function begin()
 	if not CONNECTED_TO_MYSQL then
 		sql.Begin()
