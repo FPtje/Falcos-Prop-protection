@@ -16,10 +16,6 @@ local mysqlOO
 
 local MySQLite_config = MySQLite_config or RP_MySQLConfig or FPP_MySQLConfig
 
-if not MySQLite_config then
-	ErrorNoHalt("Warning: No MySQL config!")
-end
-
 if MySQLite_config.EnableMySQL then
 	require("mysqloo")
 	mysqlOO = mysqloo
@@ -28,6 +24,10 @@ end
 module("MySQLite")
 
 function initialize()
+	if not MySQLite_config then
+		ErrorNoHalt("Warning: No MySQL config!")
+	end
+
 	if MySQLite_config.EnableMySQL then
 		timer.Simple(1, function()
 			connectToMySQL(MySQLite_config.Host, MySQLite_config.Username, MySQLite_config.Password, MySQLite_config.Database_name, MySQLite_config.Database_port)
@@ -45,6 +45,10 @@ databaseObject = nil
 
 
 local queuedQueries
+
+function isMySQL()
+	return CONNECTED_TO_MYSQL
+end
 
 function begin()
 	if not CONNECTED_TO_MYSQL then
