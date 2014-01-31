@@ -346,9 +346,6 @@ function FPP.Protect.EntityDamage(ent, dmginfo)
 		return
 	end
 
-	-- Don't say anything about players
-	if ent:IsPlayer() then return end
-
 	local cantouch = FPP.plyCanTouchEnt(attacker, ent, "EntityDamage")
 
 	if not cantouch then dmginfo:SetDamage(0) end
