@@ -269,9 +269,6 @@ function FPP.plySendTouchData(ply, ents)
 end
 
 /*---------------------------------------------------------------------------
-On entity created
----------------------------------------------------------------------------*/
-/*---------------------------------------------------------------------------
 Events that trigger recalculation
 ---------------------------------------------------------------------------*/
 local function handleConstraintCreation(ent)
@@ -312,6 +309,9 @@ local function handleConstraintCreation(ent)
 
 end
 
+/*---------------------------------------------------------------------------
+On entity created
+---------------------------------------------------------------------------*/
 local function onEntitiesCreated(ents)
 	local send = {}
 
