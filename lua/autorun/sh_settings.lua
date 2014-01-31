@@ -70,7 +70,6 @@ FPP.Settings.FPP_GLOBALSETTINGS1 = {
 	cleanupdisconnected = 1,
 	cleanupdisconnectedtime = 120,
 	cleanupadmin = 1,
-	antispeedhack = 0,
 	antie2minge = 1}
 FPP.Settings.FPP_ANTISPAM1 = {
 	toggle = 1,
