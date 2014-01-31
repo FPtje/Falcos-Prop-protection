@@ -328,10 +328,7 @@ local function RetrieveRestrictedTools()
 		if type(perplayerData) ~= "table" then return end
 		for k,v in pairs(perplayerData) do
 			FPP.RestrictedToolsPlayers[v.toolname] = FPP.RestrictedToolsPlayers[v.toolname] or {}
-			local convert = {}
-			convert["1"] = true
-			convert["0"] = false
-			FPP.RestrictedToolsPlayers[v.toolname][v.steamid] = convert[v.allow]
+			FPP.RestrictedToolsPlayers[v.toolname][v.steamid] = tobool(v.allow)
 		end
 	end)
 
