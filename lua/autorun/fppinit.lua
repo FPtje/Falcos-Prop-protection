@@ -7,6 +7,7 @@ if SERVER then
 	include("fpp/sh_cppi.lua")
 	include("fpp/sh_settings.lua")
 
+	include("fpp/server/defaultblockedmodels.lua")
 	include("fpp/server/settings.lua")
 	include("fpp/server/core.lua")
 	include("fpp/server/antispam.lua")
