@@ -280,7 +280,7 @@ local function RetrieveBlockedModels()
 	if not MySQLite.mySQLDB then
 		local count = MySQLite.queryValue("SELECT COUNT(*) FROM FPP_BLOCKEDMODELS1;") or 0
 
-		if count == 0 then
+		if tonumber(count) == 0 then
 			include("fpp/server/defaultblockedmodels.lua") -- Load the default blocked models on first run
 		end
 
