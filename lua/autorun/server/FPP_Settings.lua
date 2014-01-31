@@ -245,16 +245,20 @@ end
 concommand.Add("FPP_ShareProp", ShareProp)
 
 local function RetrieveSettings()
-	for k,v in pairs(FPP.Settings) do
+	for k in pairs(FPP.Settings) do
 		FPPDB.Query("SELECT setting, var FROM "..k..";", function(data)
-
-			if data then
-				local i = 0
-				for key, value in pairs(data) do
-					FPP.Settings[k][value.var] = tonumber(value.setting)
-					i = i + 0.05
-					timer.Simple(i, function() RunConsoleCommand("_"..k.."_"..value.var, tonumber(value.setting)) end)
+			if not data then return end
+			local i = 0
+			for _,value in pairs(data) do
+				if FPP.Settings[k][value.var] == nil then
+					-- Likely an old setting that has since been removed from FPP.
+					-- This setting however still exists in the DB. Time to remove it.
+					FPPDB.Query("DELETE FROM "..k.." WHERE var = "..sql.SQLStr(value.var)..";")
+					continue
 				end
+				FPP.Settings[k][value.var] = tonumber(value.setting)
+				i = i + 0.05
+				timer.Simple(i, function() RunConsoleCommand("_"..k.."_"..value.var, tonumber(value.setting)) end)
 			end
 		end)
 	end
@@ -385,10 +389,7 @@ local function RetrieveRestrictedTools()
 		if type(perplayerData) ~= "table" then return end
 		for k,v in pairs(perplayerData) do
 			FPP.RestrictedToolsPlayers[v.toolname] = FPP.RestrictedToolsPlayers[v.toolname] or {}
-			local convert = {}
-			convert["1"] = true
-			convert["0"] = false
-			FPP.RestrictedToolsPlayers[v.toolname][v.steamid] = convert[v.allow]
+			FPP.RestrictedToolsPlayers[v.toolname][v.steamid] = tobool(v.allow)
 		end
 	end)
 
