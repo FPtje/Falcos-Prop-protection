@@ -20,6 +20,7 @@ if SERVER then
 	AddCSLuaFile("fpp/sh_settings.lua")
 
 	if FPP_MySQLConfig and FPP_MySQLConfig.EnableMySQL then
+		hook.Add("DatabaseInitialized", "FPP Init", FPP.Init)
 		MySQLite.connectToMySQL(FPP_MySQLConfig.Host, FPP_MySQLConfig.Username, FPP_MySQLConfig.Password, FPP_MySQLConfig.Database_name, FPP_MySQLConfig.Database_port)
 	else
 		FPP.Init()
