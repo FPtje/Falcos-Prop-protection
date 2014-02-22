@@ -171,7 +171,7 @@ function FPP.AdminMenu(Panel)
 		local rm = general:Add("DButton")
 		rm:SetText(v:Nick())
 		rm:SetConsoleCommand("FPP_Cleanup", v:UserID())
-		rm:SetDisabled(not LocalPlayer():IsAdmin() and not admin)
+		rm:SetDisabled(not admin)
 	end
 	if not areplayers then
 		local nope = general:Add(Label("<No players available>"))
