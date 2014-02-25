@@ -45,7 +45,9 @@ if SERVER then
 		self.FPPOwner = ply
 		self.FPPOwnerID = ply:SteamID()
 
+		self.FPPOwnerChanged = true
 		FPP.recalculateCanTouch(player.GetAll(), {self})
+		self.FPPOwnerChanged = nil
 
 		return true
 	end

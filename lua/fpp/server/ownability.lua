@@ -173,7 +173,7 @@ function FPP.calculateCanTouch(ply, ent)
 	ent.FPPCanTouch = ent.FPPCanTouch or {}
 	ent.FPPCanTouchWhy = ent.FPPCanTouchWhy or {}
 
-	local changed = ent.FPPCanTouch[ply] ~= canTouch or ent.FPPCanTouchWhy[ply] ~= reasons
+	local changed = ent.FPPCanTouch[ply] ~= canTouch or ent.FPPCanTouchWhy[ply] ~= reasons or ent.FPPOwnerChanged
 	ent.FPPCanTouch[ply] = canTouch
 	ent.FPPCanTouchWhy[ply] = reasons
 
