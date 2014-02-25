@@ -333,7 +333,7 @@ local function RetrieveBlockedModels()
 	-- Sometimes when the database retrieval is corrupt,
 	-- only parts of the table will be retrieved
 	-- This is a workaround
-	if not MySQLite.mySQLDB then
+	if not MySQLite.isMySQL() then
 		local count = MySQLite.queryValue("SELECT COUNT(*) FROM FPP_BLOCKEDMODELS1;") or 0
 		if tonumber(count) == 0 then
 			FPP.AddDefaultBlockedModels() -- Load the default blocked models on first run
@@ -828,11 +828,6 @@ function FPP.Init()
 		RetrieveGroups()
 		RetrieveSettings()
 	end)
-end
-if FPP_MySQLConfig and FPP_MySQLConfig.EnableMySQL then
-	MySQLite.connectToMySQL(FPP_MySQLConfig.Host, FPP_MySQLConfig.Username, FPP_MySQLConfig.Password, FPP_MySQLConfig.Database_name, FPP_MySQLConfig.Database_port)
-else
-	FPP.Init()
 end
 
 local assbackup = ASS_RegisterPlugin -- Suddenly after witing this code, ASS spamprotection and propprotection broke. I have no clue why. I guess you should use FPP then

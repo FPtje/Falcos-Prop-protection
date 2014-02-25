@@ -7,7 +7,7 @@ function CPPI:GetName()
 end
 
 function CPPI:GetVersion()
-	return "addon.2"
+	return "universal.1"
 end
 
 function CPPI:GetInterfaceVersion()
@@ -44,20 +44,9 @@ if SERVER then
 	function ENTITY:CPPISetOwner(ply)
 		self.FPPOwner = ply
 		self.FPPOwnerID = ply:SteamID()
-		/*local ConstrainedEntities
-		if constraint.HasConstraints(self) then
-			ConstrainedEntities = constraint.GetAllConstrainedEntities(self)
-			for _,ent in pairs(ConstrainedEntities) do
-				if IsValid(ent) then
-					ent.FPPOwner = ply
-					ent.FPPOwnerID = ply:SteamID()
-				end
-			end
-		end*
-		ConstrainedEntities = ConstrainedEntities or {}
-		ConstrainedEntities[self] = self*/
 
-		FPP.recalculateCanTouch(player.GetAll(), {ply})
+		FPP.recalculateCanTouch(player.GetAll(), {self})
+
 		return true
 	end
 
