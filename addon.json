@@ -1,11 +1,13 @@
 {
-	"title"		:	"Falco's Prop Protection (FPP)",
-	"type"		:	"tool",
-	"tags"		:	[ "build" ],
-	"ignore"	:
-	[
-		"*.git*",
-		"*.bat",
-		"*.jpg"
-	]
+    "ignore": [
+        "*.git*",
+        "*.jpg"
+    ],
+    "tags": [
+        "build"
+    ],
+    "title": "Falco's Prop Protection (FPP)",
+    "type": "tool",
+    "workshopid": 133537219,
+    "default_changelog": "All changes can be found on https://github.com/FPtje/Falcos-Prop-protection"
 }
