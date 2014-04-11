@@ -1,10 +1,7 @@
 FPP = FPP or {}
 local plyMeta = FindMetaTable("Player")
 local entMeta = FindMetaTable("Entity")
--- lua_run print(Player(2):GetEyeTrace().Entity.FPPCanTouch[Player(2)], Player(2):GetEyeTrace().Entity.FPPCanTouchWhy[Player(2)])
--- lua_run FPP.calculateCanTouch(Player(2), Player(2):GetEyeTrace().Entity)
--- lua_openscript autorun/server/FPP_Ownability.lua;clear
--- lua_run_cl print(FPP.canTouchEnt(LocalPlayer():GetEyeTrace().Entity), FPP.entGetTouchReason(LocalPlayer():GetEyeTrace().Entity))
+
 /*---------------------------------------------------------------------------
 Entity data explanation.
 Every ent has a field FPPCanTouch. This is a table with one entry per player.
@@ -68,7 +65,7 @@ local function getSetting(touchType)
 	return touchType.."1", string.upper("FPP_"..touchType.."1")
 end
 
-local constraints = { -- These little buggers thinks they're not constraints, but they are
+local constraints = { -- These little buggers think they're not constraints, but they are
 	["phys_spring"] = true,
 }
 local function isConstraint(ent)
@@ -191,7 +188,7 @@ function FPP.recalculateCanTouch(players, entities)
 
 	for _, ply in pairs(players) do
 		if not IsValid(ply) then continue end
-		// optimisations
+		-- optimisations
 		ply.FPPIsAdmin = ply:IsAdmin()
 		ply.FPP_PrivateSettings_OtherPlayerProps = ply:GetInfo("FPP_PrivateSettings_OtherPlayerProps")
 		ply.cl_pickupplayers = ply:GetInfo("cl_pickupplayers")
@@ -207,7 +204,7 @@ function FPP.recalculateCanTouch(players, entities)
 
 		FPP.plySendTouchData(ply, changed)
 
-		// end optimisations
+		-- end optimisations
 		ply.FPP_PrivateSettings_OtherPlayerProps = nil
 		ply.cl_pickupplayers = nil
 		ply.FPP_PrivateSettings_BlockedProps = nil

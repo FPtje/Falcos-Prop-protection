@@ -597,7 +597,7 @@ function FPP.PlayerDisconnect(ply)
 end
 hook.Add("PlayerDisconnected", "FPP.PlayerDisconnect", FPP.PlayerDisconnect)
 
---PlayerInitialspawn, the props he had left before will now be his again
+-- PlayerInitialspawn, the props he had left before will now be theirs again
 function FPP.PlayerInitialSpawn(ply)
 	local RP = RecipientFilter()
 
