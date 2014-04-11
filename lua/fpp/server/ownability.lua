@@ -359,13 +359,15 @@ end)
 /*---------------------------------------------------------------------------
 On entity removed
 ---------------------------------------------------------------------------*/
+-- Recalculates touchability information for constrained entities
+-- Note: Assumes normal touchability information is up to date!
 -- Update constraints, O(players * (entities + constraints))
-local function updateConstrainedGroupsRestricted(entities)
+function FPP.RecalculateConstrainedEntities(players, entities)
 	for i, ent in pairs(entities) do
-		if not IsValid(ent) then
-			entities[i] = nil
-			continue
-		end
+		if not IsValid(ent) then entities[i] = nil continue end
+		if ent:GetSolid() == 0 or ent:IsEFlagSet(EFL_SERVER_ONLY) then entities[i] = nil continue end
+		if not ent:GetPhysicsObject():IsValid() then entities[i] = nil continue end
+		if blockedEnts[ent:GetClass()] then entities[i] = nil continue end
 
 		ent.FPPRestrictConstraint = ent.FPPRestrictConstraint or {}
 		ent.FPPConstraintReasons = ent.FPPConstraintReasons or {}
@@ -373,7 +375,7 @@ local function updateConstrainedGroupsRestricted(entities)
 
 	-- constrained entities form a graph.
 	-- and graphs are things you can traverse with BFS
-	for _, ply in pairs(player.GetAll()) do
+	for _, ply in pairs(players) do
 		local discovered = {}
 		-- BFS vars
 		local BFSQueue = {}
@@ -428,7 +430,7 @@ local entMem = {}
 local function constraintRemovedTimer(ent1, ent2, constrainedEnts)
 	if not IsValid(ent1) and not IsValid(ent2) or not constrainedEnts then return end
 
-	updateConstrainedGroupsRestricted(constrainedEnts)
+	FPP.RecalculateConstrainedEntities(player.GetAll(), constrainedEnts)
 	entMem = {}
 end
 

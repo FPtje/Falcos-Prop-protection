@@ -696,6 +696,7 @@ local function SetBuddy(ply, cmd, args)
 		table.insert(affectedProps, v)
 	end
 	FPP.recalculateCanTouch({buddy}, affectedProps)
+	FPP.RecalculateConstrainedEntities({buddy}, affectedProps)
 end
 concommand.Add("FPP_SetBuddy", SetBuddy)
 
