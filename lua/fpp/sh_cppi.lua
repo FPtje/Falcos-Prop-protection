@@ -22,14 +22,11 @@ local PLAYER = FindMetaTable("Player")
 function PLAYER:CPPIGetFriends()
 	if not self.Buddies then return CPPI.CPPI_DEFER end
 	local FriendsTable = {}
+
 	for k,v in pairs(self.Buddies) do
-		for _,ply in pairs(player.GetAll()) do
-			if ply:SteamID() == k then
-				table.insert(FriendsTable, ply)
-				break
-			end
-		end
+		table.insert(FriendsTable, k)
 	end
+
 	return FriendsTable
 end
 
@@ -42,8 +39,9 @@ end
 
 if SERVER then
 	function ENTITY:CPPISetOwner(ply)
+		local steamId = IsValid(ply) and ply:IsPlayer() and ply:SteamID() or nil
 		self.FPPOwner = ply
-		self.FPPOwnerID = ply:SteamID()
+		self.FPPOwnerID = steamId
 
 		self.FPPOwnerChanged = true
 		FPP.recalculateCanTouch(player.GetAll(), {self})
