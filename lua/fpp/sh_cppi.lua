@@ -40,15 +40,16 @@ end
 
 if SERVER then
 	function ENTITY:CPPISetOwner(ply)
+		local steamId = IsValid(ply) and ply:IsPlayer() and ply:SteamID() or nil
 		self.FPPOwner = ply
-		self.FPPOwnerID = ply:SteamID()
-		if constraint.HasConstraints( self ) then
-			local ConstrainedEntities = constraint.GetAllConstrainedEntities( self )
+		self.FPPOwnerID = steamId
+
+		if constraint.HasConstraints(self) then
+			local ConstrainedEntities = constraint.GetAllConstrainedEntities(self)
 			for _,ent in pairs(ConstrainedEntities) do
-				if IsValid(ent) then
-					ent.FPPOwner = ply
-					ent.FPPOwnerID = ply:SteamID()
-				end
+				if not IsValid(ent) then continue end
+				ent.FPPOwner = ply
+				ent.FPPOwnerID = steamId
 			end
 		end
 		return true

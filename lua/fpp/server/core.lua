@@ -292,9 +292,11 @@ end
 
 local function DoShowOwner(ply, ent, cantouch, why)
 	ply.FPPEntOwnershipMemory = ply.FPPEntOwnershipMemory or {}
+	ply.FPPEntOwnershipWhyMemory = ply.FPPEntOwnershipWhyMemory or {}
 
-	if ply.FPPEntOwnershipMemory[ent] == cantouch then return end
+	if ply.FPPEntOwnershipMemory[ent] == cantouch and ply.FPPEntOwnershipWhyMemory[ent] == why then return end
 	ply.FPPEntOwnershipMemory[ent] = cantouch
+	ply.FPPEntOwnershipWhyMemory[ent] = why
 
 	umsg.Start("FPP_Owner", ply)
 		umsg.Short(ent:EntIndex())
