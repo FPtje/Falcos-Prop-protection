@@ -32,8 +32,7 @@ end
 
 local ENTITY = FindMetaTable("Entity")
 function ENTITY:CPPIGetOwner()
-	if CLIENT then return nil, CPPI.CPPI_NOTIMPLEMENTED end
-	local Owner = self.FPPOwner
+	local Owner = FPP.entGetOwner(self)
 	if not IsValid(Owner) or not Owner:IsPlayer() then return Owner, self.FPPOwnerID end
 	return Owner, Owner:UniqueID()
 end
@@ -44,14 +43,10 @@ if SERVER then
 		self.FPPOwner = ply
 		self.FPPOwnerID = steamId
 
-		if constraint.HasConstraints(self) then
-			local ConstrainedEntities = constraint.GetAllConstrainedEntities(self)
-			for _,ent in pairs(ConstrainedEntities) do
-				if not IsValid(ent) then continue end
-				ent.FPPOwner = ply
-				ent.FPPOwnerID = steamId
-			end
-		end
+		self.FPPOwnerChanged = true
+		FPP.recalculateCanTouch(player.GetAll(), {self})
+		self.FPPOwnerChanged = nil
+
 		return true
 	end
 
@@ -75,18 +70,18 @@ if SERVER then
 	function ENTITY:CPPICanTool(ply, tool)
 		local Value = FPP.Protect.CanTool(ply, nil, tool, self)
 		if Value ~= false and Value ~= true then Value = true end
-		return Value-- fourth argument is entity, to avoid traces.
+		return Value
 	end
 
 	function ENTITY:CPPICanPhysgun(ply)
-		return FPP.PlayerCanTouchEnt(ply, self, "Physgun1", "FPP_PHYSGUN1")
+		return FPP.plyCanTouchEnt(ply, self, "Physgun")
 	end
 
 	function ENTITY:CPPICanPickup(ply)
-		return FPP.PlayerCanTouchEnt(ply, self, "Gravgun1", "FPP_GRAVGUN1")
+		return FPP.plyCanTouchEnt(ply, self, "Gravgun")
 	end
 
 	function ENTITY:CPPICanPunt(ply)
-		return FPP.PlayerCanTouchEnt(ply, self, "Gravgun1", "FPP_GRAVGUN1")
+		return FPP.plyCanTouchEnt(ply, self, "Gravgun")
 	end
 end
