@@ -119,28 +119,9 @@ local function AddBlocked(ply, cmd, args)
 	if FPP.Blocked[args[1]][args[2]] then return end
 	FPP.Blocked[args[1]][args[2]] = true
 
-	MySQLite.query("SELECT * FROM FPP_BLOCKED1;", function(data)
-		if type(data) == "table" then
-			local found = false
-			local highest = 0
-			for k,v in pairs(data) do
-				if tonumber(v.id) > highest then
-					highest = tonumber(v.id)
-				end
-				if v.var == args[1] and v.setting == args[2] then
-					found = true
-				end
-			end
-			if not found then
-				MySQLite.query("INSERT INTO FPP_BLOCKED1 VALUES("..highest + 1 ..", " .. sql.SQLStr(args[1]) .. ", " .. sql.SQLStr(args[2]) .. ");")
-			end
-		else
-			--insert
-			MySQLite.query("INSERT INTO FPP_BLOCKED1 VALUES(1, " .. sql.SQLStr(args[1]) .. ", " .. sql.SQLStr(args[2]) .. ");")
-		end
+	MySQLite.query(string.format("INSERT INTO FPP_BLOCKED1 (var, setting) VALUES(%s, %s);", sql.SQLStr(args[1]), sql.SQLStr(args[2])))
 
-		FPP.NotifyAll(((ply.Nick and ply:Nick()) or "Console").. " added ".. args[2] .. " to the "..args[1] .. " black/whitelist", true)
-	end)
+	FPP.NotifyAll(((ply.Nick and ply:Nick()) or "Console").. " added ".. args[2] .. " to the "..args[1] .. " black/whitelist", true)
 
 	FPP.recalculateCanTouch(player.GetAll(), ents.FindByClass(args[2]))
 end
@@ -820,6 +801,10 @@ function FPP.Init()
 		MySQLite.queueQuery("CREATE TABLE IF NOT EXISTS FPP_GROUPMEMBERS1(steamid VARCHAR(40) NOT NULL, groupname VARCHAR(40) NOT NULL, PRIMARY KEY(steamid));")
 
 		MySQLite.queueQuery("CREATE TABLE IF NOT EXISTS FPP_BLOCKEDMODELS1(model VARCHAR(140) NOT NULL PRIMARY KEY);")
+
+		if MySQLite.isMySQL() then
+			MySQLite.query("ALTER TABLE FPP_BLOCKED1 CHANGE id id INTEGER AUTO_INCREMENT;")
+		end
 
 	MySQLite.commit(function()
 
