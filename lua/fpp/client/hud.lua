@@ -129,7 +129,6 @@ local weaponClassTouchTypes = {
 	["gmod_tool"] = "Toolgun",
 }
 
-local comingAroundAgain = 0
 local function HUDPaint()
 
 	local i = 0
@@ -150,10 +149,7 @@ local function HUDPaint()
 
 	--Show the owner:
 	local LAEnt = LocalPlayer():GetEyeTraceNoCursor().Entity
-	if not IsValid(LAEnt) then
-		comingAroundAgain = 0
-		return
-	end
+	if not IsValid(LAEnt) then return end
 
 	local weapon = LocalPlayer():GetActiveWeapon()
 	if not IsValid(weapon) then return end
@@ -167,12 +163,8 @@ local function HUDPaint()
 	local w,h = surface.GetTextSize(reason)
 	local col = FPP.canTouchEnt(LAEnt, touchType) and Color(0,255,0,255) or Color(255,0,0,255)
 
-	if comingAroundAgain < w then
-		comingAroundAgain = math.Min(comingAroundAgain + (RealFrameTime()*600), w)
-	end
-
-	draw.RoundedBox(4, comingAroundAgain - w, ScrH()/2 - h - 2, w + 10, 20, Color(0, 0, 0, 110))
-	draw.DrawText(reason, "Default", 5 - w + comingAroundAgain, ScrH()/2 - h, col, 0)
+	draw.RoundedBox(4, 0, ScrH()/2 - h - 2, w + 10, 20, Color(0, 0, 0, 110))
+	draw.DrawText(reason, "Default", 5, ScrH()/2 - h, col, 0)
 	surface.SetDrawColor(255,255,255,255)
 end
 hook.Add("HUDPaint", "FPP_HUDPaint", HUDPaint)
