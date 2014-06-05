@@ -404,6 +404,10 @@ function FPP.RecalculateConstrainedEntities(players, entities)
 
 				black[value] = true
 				discovered[value] = true
+
+				-- The entity doesn't necessarily have CanTouch data at this point
+				value.FPPCanTouch = value.FPPCanTouch or {}
+				value.FPPCanTouch[ply] = value.FPPCanTouch[ply] or 0
 				FPP_CanTouch = bit.band(FPP_CanTouch or 0, value.FPPCanTouch[ply])
 			end
 
