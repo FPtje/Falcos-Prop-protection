@@ -667,3 +667,15 @@ function constraint.CanConstrain(ent, bone)
 
 	return canConstrain(ent, bone)
 end
+
+-- Crash exploit workaround
+local setAngles = ENTITY.SetAngles
+function ENTITY:SetAngles(ang)
+	if not ang then return setAngles(self, ang) end
+
+	ang.p = ang.p % 360
+	ang.y = ang.y % 360
+	ang.r = ang.r % 360
+
+	return setAngles(self, ang)
+end
