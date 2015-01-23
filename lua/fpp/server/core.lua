@@ -83,33 +83,6 @@ if cleanup then
 	end
 end
 
-FPP.ApplyForceCenter = FPP.ApplyForceCenter or debug.getregistry().PhysObj.ApplyForceCenter
-
-debug.getregistry().PhysObj.ApplyForceCenter = function(self, force)
-	local i = 0
-	local ent = self:GetEntity()
-	if ent.FPPE2Nocollided then FPP.ApplyForceCenter(self, force) end
-
-	while tobool(FPP.Settings.FPP_GLOBALSETTINGS1.antie2minge) do
-		i = i + 1
-		local DebugLevel = debug.getinfo(i, "Sln")
-		if not DebugLevel then break end
-		if DebugLevel and string.find(DebugLevel.short_src, "gmod_wire_expression2") and IsValid(ent) and tobool(FPP.Settings.FPP_GLOBALSETTINGS1.antie2minge) then
-			ent:SetCollisionGroup(COLLISION_GROUP_WEAPON)
-			ent.FPPE2Nocollided = true
-			local ConstrainedEnts = constraint.GetAllConstrainedEntities(self:GetEntity())
-
-			if ConstrainedEnts then -- All its constrained entities as well!
-				for k,v in pairs(ConstrainedEnts) do
-					v.FPPE2Nocollided = true
-					v:SetCollisionGroup(COLLISION_GROUP_WEAPON)
-				end
-			end
-		end
-	end
-	return FPP.ApplyForceCenter(self, force)
-end
-
 local PLAYER = FindMetaTable("Player")
 
 if PLAYER.AddCount then
