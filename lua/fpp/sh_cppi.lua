@@ -34,7 +34,7 @@ end
 local ENTITY = FindMetaTable("Entity")
 function ENTITY:CPPIGetOwner()
 	local Owner = FPP.entGetOwner(self)
-	if not IsValid(Owner) or not Owner:IsPlayer() then return Owner, self.FPPOwnerID end
+	if not IsValid(Owner) or not Owner:IsPlayer() then return SERVER and Owner or nil, self.FPPOwnerID end
 	return Owner, Owner:UniqueID()
 end
 
