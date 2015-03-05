@@ -45,7 +45,7 @@ if SERVER then
 		local canSetOwner = hook.Run("CPPIAssignOwnership", ply, self, valid and ply:UniqueID() or ply)
 
 		if canSetOwner == false then return end
-		ply = canSetOwner ~= nil and canSetOwner or ply
+		ply = canSetOwner ~= nil and canSetOwner ~= true and canSetOwner or ply
 		self.FPPOwner = ply
 		self.FPPOwnerID = steamId
 
