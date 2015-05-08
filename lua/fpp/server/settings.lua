@@ -89,13 +89,46 @@ local function getSettingsChangedEntities(settingsType, setting)
 	end
 end
 
+
+util.AddNetworkString("FPP_Settings")
+local function SendSettings(ply)
+	net.Start("FPP_Settings")
+		FPP.ForAllSettings(function(k, s, v)
+			net.WriteDouble(v)
+		end)
+	net.Send(ply)
+end
+
+util.AddNetworkString("FPP_Settings_Update")
+local function updateFPPSetting(kind, setting, value)
+	local skipKind, skipSetting = 0, 0
+	FPP.Settings[kind][setting] = value
+
+	local finalSkipKind
+	FPP.ForAllSettings(function(k, s)
+		skipKind = skipKind + 1
+
+		if k ~= kind then return true end
+		finalSkipKind = skipKind - skipSetting
+		skipSetting = skipSetting + 1
+		if s ~= setting then return end
+
+		return true
+	end)
+
+	net.Start("FPP_Settings_Update")
+		net.WriteUInt(finalSkipKind, 8)
+		net.WriteUInt(skipSetting, 8)
+		net.WriteDouble(value)
+	net.Broadcast()
+end
+
 local function FPP_SetSetting(ply, cmd, args)
 	if ply:EntIndex() ~= 0 and not ply:IsSuperAdmin() then FPP.Notify(ply, "You need superadmin privileges in order to be able to use this command", false) return end
 	if not args[1] or not args[3] or not FPP.Settings[args[1]] then FPP.Notify(ply, "Argument(s) invalid", false) return end
 	if not FPP.Settings[args[1]][args[2]] then FPP.Notify(ply, "Argument invalid",false) return end
 
-	FPP.Settings[args[1]][args[2]] = tonumber(args[3])
-	RunConsoleCommand("_"..args[1].."_"..args[2], tonumber(args[3]))
+	updateFPPSetting(args[1], args[2], tonumber(args[3]))
 
 	MySQLite.queryValue("SELECT var FROM ".. args[1] .. " WHERE var = "..sql.SQLStr(args[2])..";", function(data)
 		if not data then
@@ -240,10 +273,8 @@ local function RetrieveSettings()
 					MySQLite.query("DELETE FROM "..k.." WHERE var = "..sql.SQLStr(value.var)..";")
 					continue
 				end
-				FPP.Settings[k][value.var] = tonumber(value.setting)
-				i = i + 0.05
-				timer.Simple(i, function() RunConsoleCommand("_"..k.."_"..value.var, tonumber(value.setting)) end)
 			end
+			SendSettings(player.GetAll())
 		end)
 	end
 end
@@ -424,20 +455,6 @@ local function RetrieveGroups()
 	end)
 end
 
-local function SendSettings(ply)
-	timer.Simple(10, function()
-		local i = 0
-		for k,v in pairs(FPP.Settings) do
-			for a,b in pairs(v) do
-				i = i + FrameTime()*2
-				timer.Simple(i, function()
-					RunConsoleCommand("_"..k.."_"..a, (b and b + 1) or 0)
-					timer.Simple(i, function() RunConsoleCommand("_"..k.."_"..a, b or "") end)
-				end)
-			end
-		end
-	end)
-end
 hook.Add("PlayerInitialSpawn", "FPP_SendSettings", SendSettings)
 
 local function AddGroup(ply, cmd, args)
