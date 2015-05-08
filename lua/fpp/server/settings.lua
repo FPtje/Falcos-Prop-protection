@@ -809,6 +809,29 @@ local function RestrictToolPerson(ply, cmd, args)
 end
 concommand.Add("FPP_restricttoolplayer", RestrictToolPerson)
 
+local function resetAllSetting(ply)
+	if ply:EntIndex() ~= 0 and not ply:IsSuperAdmin() then return end
+
+	MySQLite.begin()
+	MySQLite.queueQuery("DELETE FROM FPP_PHYSGUN1")
+	MySQLite.queueQuery("DELETE FROM FPP_GRAVGUN1")
+	MySQLite.queueQuery("DELETE FROM FPP_TOOLGUN1")
+	MySQLite.queueQuery("DELETE FROM FPP_PLAYERUSE1")
+	MySQLite.queueQuery("DELETE FROM FPP_ENTITYDAMAGE1")
+	MySQLite.queueQuery("DELETE FROM FPP_GLOBALSETTINGS1")
+	MySQLite.queueQuery("DELETE FROM FPP_ANTISPAM1")
+	MySQLite.queueQuery("DELETE FROM FPP_BLOCKMODELSETTINGS1")
+	MySQLite.commit(function()
+		FPP.Settings = nil
+		include("fpp/sh_settings.lua")
+		SendSettings(player.GetAll())
+
+		if not IsValid(ply) then return end
+		FPP.Notify(ply, "Settings successfully reset.", true)
+	end)
+end
+concommand.Add("FPP_ResetAllSettings", resetAllSetting)
+
 local function refreshPrivatePlayerSettings(ply)
 	timer.Destroy("FPP_RefreshPrivatePlayerSettings" .. ply:EntIndex())
 
