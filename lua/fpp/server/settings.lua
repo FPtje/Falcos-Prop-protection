@@ -262,8 +262,9 @@ end
 concommand.Add("FPP_ShareProp", ShareProp)
 
 local function RetrieveSettings()
+	MySQLite.begin()
 	for k in pairs(FPP.Settings) do
-		MySQLite.query("SELECT setting, var FROM "..k..";", function(data)
+		MySQLite.queueQuery("SELECT setting, var FROM "..k..";", function(data)
 			if not data then return end
 			local i = 0
 			for _,value in pairs(data) do
@@ -273,10 +274,13 @@ local function RetrieveSettings()
 					MySQLite.query("DELETE FROM "..k.." WHERE var = "..sql.SQLStr(value.var)..";")
 					continue
 				end
+				FPP.Settings[k][value.var] = tonumber(value.setting)
 			end
-			SendSettings(player.GetAll())
 		end)
 	end
+	MySQLite.commit(function()
+		SendSettings(player.GetAll())
+	end)
 end
 
 local function RetrieveBlocked()
