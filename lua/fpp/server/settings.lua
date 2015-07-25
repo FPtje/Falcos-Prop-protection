@@ -867,7 +867,7 @@ concommand.Add("_FPP_RefreshPrivatePlayerSettings", refreshPrivatePlayerSettings
 /*---------------------------------------------------------------------------
 Load all FPP settings
 ---------------------------------------------------------------------------*/
-function FPP.Init()
+function FPP.Init(callback)
 	MySQLite.begin()
 		MySQLite.queueQuery("CREATE TABLE IF NOT EXISTS FPP_BLOCKED1(id INTEGER NOT NULL, var VARCHAR(40) NOT NULL, setting VARCHAR(100) NOT NULL, PRIMARY KEY(id));")
 		MySQLite.queueQuery("CREATE TABLE IF NOT EXISTS FPP_PHYSGUN1(var VARCHAR(40) NOT NULL, setting INTEGER NOT NULL, PRIMARY KEY(var));")
@@ -900,6 +900,9 @@ function FPP.Init()
 		RetrieveRestrictedTools()
 		RetrieveGroups()
 		RetrieveSettings()
+
+		-- Callback when FPP is done creating the tables
+		if callback then callback() end
 	end)
 end
 
