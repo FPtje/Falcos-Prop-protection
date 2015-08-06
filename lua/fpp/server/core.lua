@@ -388,7 +388,7 @@ invalidToolData.rope_material = invalidToolData.material
 function FPP.Protect.CanTool(ply, trace, tool, ENT)
 	-- Toolgun restrict
 
-	if GravHull and not ENT then // Compatability with the Gravity Hull Designator, the creator hasn't yet implemented an override for util.TraceLine (which CanTool uses)
+	if GravHull and not IsEntity(ENT) then // Compatability with the Gravity Hull Designator, the creator hasn't yet implemented an override for util.TraceLine (which CanTool uses)
 		trace = ply:GetEyeTrace() // However he has implemented one for player.GetEyeTrace, which for all intents and purposes will do the same thing.
 		ENT = trace.Entity
 	end
