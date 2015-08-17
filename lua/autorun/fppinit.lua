@@ -4,7 +4,7 @@ if SERVER then
 	include("config/mysql.lua")
 	include("libraries/mysqlite/mysqlite.lua")
 
-	include("fpp/sh_cami.lua")
+	include("libraries/sh_cami.lua")
 	include("fpp/sh_cppi.lua")
 	include("fpp/sh_settings.lua")
 
@@ -19,7 +19,7 @@ if SERVER then
 	AddCSLuaFile("fpp/client/buddies.lua")
 	AddCSLuaFile("fpp/client/ownability.lua")
 
-	AddCSLuaFile("fpp/sh_cami.lua")
+	AddCSLuaFile("libraries/sh_cami.lua")
 	AddCSLuaFile("fpp/sh_cppi.lua")
 	AddCSLuaFile("fpp/sh_settings.lua")
 
@@ -35,7 +35,7 @@ elseif CLIENT then
 	include("fpp/client/buddies.lua")
 	include("fpp/client/ownability.lua")
 
-	include("fpp/sh_cami.lua")
+	include("libraries/sh_cami.lua")
 	include("fpp/sh_cppi.lua")
 	include("fpp/sh_settings.lua")
 end
