@@ -717,28 +717,39 @@ end
 concommand.Add("FPP_SendRestrictTool", SendRestrictedTools)
 
 --Buddies!
-local function SetBuddy(ply, cmd, args)
-    if not args[6] then FPP.Notify(ply, "Argument(s) invalid", false) return end
-    local buddy = tonumber(args[1]) and Player(tonumber(args[1]))
-    if not IsValid(buddy) then FPP.Notify(ply, "Player invalid", false) return end
+local function changeBuddies(ply, buddy, settings)
+    if not IsValid(ply) then return end
 
     ply.Buddies = ply.Buddies or {}
-    for k,v in pairs(args) do args[k] = tonumber(v) end
-    ply.Buddies[buddy] = {Physgun = tobool(args[2]), Gravgun = tobool(args[3]), Toolgun = tobool(args[4]), PlayerUse = tobool(args[5]), EntityDamage = tobool(args[6])}
+    ply.Buddies[buddy] = settings
 
     local CPPIBuddies = {}
     for k,v in pairs(ply.Buddies) do if table.HasValue(v, true) then table.insert(CPPIBuddies, k) end end
     -- Also run at player spawn because clients send their buddies through this command
     hook.Run("CPPIFriendsChanged", ply, CPPIBuddies)
 
+    -- Update the prop protection
     local affectedProps = {}
     for k,v in pairs(ents.GetAll()) do
         local owner = v:CPPIGetOwner()
         if owner ~= ply then continue end
         table.insert(affectedProps, v)
     end
+
     FPP.recalculateCanTouch({buddy}, affectedProps)
     FPP.RecalculateConstrainedEntities({buddy}, affectedProps)
+end
+
+local function SetBuddy(ply, cmd, args)
+    if not args[6] then FPP.Notify(ply, "Argument(s) invalid", false) return end
+    local buddy = tonumber(args[1]) and Player(tonumber(args[1]))
+    if not IsValid(buddy) then FPP.Notify(ply, "Player invalid", false) return end
+
+    for k,v in pairs(args) do args[k] = tonumber(v) end
+    local settings = {Physgun = tobool(args[2]), Gravgun = tobool(args[3]), Toolgun = tobool(args[4]), PlayerUse = tobool(args[5]), EntityDamage = tobool(args[6])}
+
+    -- Antispam measure
+    timer.Create("FPP_BuddiesUpdate" .. ply:UserID() .. ", " .. buddy:UserID(), 1, 1, function() changeBuddies(ply, buddy, settings) end)
 end
 concommand.Add("FPP_SetBuddy", SetBuddy)
 
