@@ -522,12 +522,28 @@ function FPP.Protect.CanDrive(ply, ent)
 end
 hook.Add("CanDrive", "FPP.Protect.CanDrive", FPP.Protect.CanDrive)
 
+
+local function freezeDisconnected(ply)
+    local SteamID = ply:SteamID()
+
+    for _, ent in pairs(ents.GetAll()) do
+        local physObj = ent:GetPhysicsObject()
+        if not IsValid(ent) or ent.FPPOwnerID ~= SteamID or ent:GetPersistent() or not physObj:IsValid() then continue end
+
+        physObj:EnableMotion(false)
+    end
+end
+
 --Player disconnect, not part of the Protect table.
 function FPP.PlayerDisconnect(ply)
     if not IsValid(ply) then return end
 
     local SteamID = ply:SteamID()
     FPP.DisconnectedPlayers[SteamID] = true
+
+    if tobool(FPP.Settings.FPP_GLOBALSETTINGS1.freezedisconnected) then
+        freezeDisconnected(ply)
+    end
 
     if not tobool(FPP.Settings.FPP_GLOBALSETTINGS1.cleanupdisconnected) or
     not FPP.Settings.FPP_GLOBALSETTINGS1.cleanupdisconnectedtime then
