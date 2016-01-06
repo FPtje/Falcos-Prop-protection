@@ -2,6 +2,7 @@ FPP = FPP or {}
 
 util.AddNetworkString("FPP_Groups")
 util.AddNetworkString("FPP_GroupMembers")
+util.AddNetworkString("FPP_RestrictedToolList")
 
 FPP.Blocked = FPP.Blocked or {}
     FPP.Blocked.Physgun1 = FPP.Blocked.Physgun1 or {}
@@ -697,22 +698,16 @@ local function SendRestrictedTools(ply, cmd, args)
     ply.FPPUmsg3 = CurTime()
 
     if not args[1] then return end
-    umsg.Start("FPP_RestrictedToolList", ply)
-        umsg.String(args[1])
-        if FPP.RestrictedTools[args[1]] and FPP.RestrictedTools[args[1]].admin then
-            umsg.Long(FPP.RestrictedTools[args[1]].admin)
-        else
-            umsg.Long(0)
-        end
+    net.Start("FPP_RestrictedToolList")
+        net.WriteString(args[1]) -- tool name
+        net.WriteUInt(FPP.RestrictedTools[args[1]] and FPP.RestrictedTools[args[1]].admin or 0, 2) -- user, admin or superadmin
 
-        local teamrestrict = "nil"
-        if FPP.RestrictedTools[args[1]] and FPP.RestrictedTools[args[1]].team then
-            teamrestrict = table.concat(FPP.RestrictedTools[args[1]]["team"], ";")
+        local teams = FPP.RestrictedTools[args[1]] and FPP.RestrictedTools[args[1]].team or {}
+        net.WriteUInt(#teams, 10)
+        for _, t in pairs(teams) do
+            net.WriteUInt(t, 10)
         end
-        if teamrestrict == "" then teamrestrict = "nil" end
-        umsg.String(teamrestrict)
-
-    umsg.End()
+    net.Send(ply)
 end
 concommand.Add("FPP_SendRestrictTool", SendRestrictedTools)
 

@@ -638,13 +638,12 @@ usermessage.Hook("FPP_BlockedModel", RetrieveBlockedModels)
 RetrieveRestrictedTool = function(um)
     local tool, admin, Teams = um, 0, {}--Settings when it's not a usermessage
     if type(um) ~= "table" then
-        tool = um:ReadString()
-        admin = um:ReadLong()
-        Teams = um:ReadString()
-        if Teams ~= "nil" then
-            Teams = string.Explode(";", Teams)
-        else
-            Teams = {}
+        tool = net.ReadString()
+        admin = net.ReadUInt(2)
+        local teamCount = net.ReadUInt(10)
+
+        for i = 1, teamCount do
+            Teams[net.ReadUInt(10)] = true
         end
     end
 
@@ -781,20 +780,18 @@ RetrieveRestrictedTool = function(um)
     Tpan:EnableHorizontal(false)
     Tpan:EnableVerticalScrollbar(true)
 
-    for k,v in pairs(team.GetAllTeams()) do
+    for k, v in pairs(team.GetAllTeams()) do
         local chkbx = vgui.Create("DCheckBoxLabel")
         chkbx:SetText(v.Name)
         chkbx:SetDark(true)
         chkbx.Team = k
-        if table.HasValue(Teams, tostring(k)) then
-            chkbx.Button:SetValue(true)
-        end
+        chkbx.Button:SetValue(Teams[k])
 
         chkbx.Button.Toggle = function()
             if chkbx.Button:GetChecked() == nil or not chkbx.Button:GetChecked() then
-                chkbx.Button:SetValue( true )
+                chkbx.Button:SetValue(true)
             else
-                chkbx.Button:SetValue( false )
+                chkbx.Button:SetValue(false)
             end
 
             local tonum = {}
@@ -815,7 +812,7 @@ RetrieveRestrictedTool = function(um)
     end
 
 end
-usermessage.Hook("FPP_RestrictedToolList", RetrieveRestrictedTool)
+net.Receive("FPP_RestrictedToolList", RetrieveRestrictedTool)
 
 EditGroupTools = function(groupname)
     if not FPP.Groups[groupname] then return end
