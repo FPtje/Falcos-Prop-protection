@@ -3,6 +3,7 @@ FPP = FPP or {}
 util.AddNetworkString("FPP_Groups")
 util.AddNetworkString("FPP_GroupMembers")
 util.AddNetworkString("FPP_RestrictedToolList")
+util.AddNetworkString("FPP_BlockedModels")
 
 FPP.Blocked = FPP.Blocked or {}
     FPP.Blocked.Physgun1 = FPP.Blocked.Physgun1 or {}
@@ -681,14 +682,14 @@ local function SendBlockedModels(ply, cmd, args)
     if ply.FPPUmsg2 > CurTime() - 10 then return end
     ply.FPPUmsg2 = CurTime()
 
-    local i = 0
-    for k,v in pairs(FPP.BlockedModels) do
-        timer.Simple(i * 0.01, function()
-            umsg.Start("FPP_BlockedModel", ply)
-                umsg.String(k)
-            umsg.End()
-        end)
-    end
+    local models = {}
+
+    for k,v in pairs(FPP.BlockedModels) do table.insert(models, k) end
+
+    local data = util.Compress(table.concat(models, "\0"))
+    net.Start("FPP_BlockedModels")
+        net.WriteData(data, #data)
+    net.Send(ply)
 end
 concommand.Add("FPP_sendblockedmodels", SendBlockedModels)
 

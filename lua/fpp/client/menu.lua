@@ -615,25 +615,29 @@ function FPP.AdminMenu(Panel)
     AdminPanel:Dock(FILL)
 end
 
-RetrieveBlockedModels = function(um)
-    local model = um:ReadString()
+RetrieveBlockedModels = function(len)
     if not ShowBlockedModels then return end
+    local data = net.ReadData(len)
 
-    local Icon = vgui.Create("SpawnIcon", ShowBlockedModels.pan)
-    Icon:SetModel(model, 1)
-    Icon:SetSize(64, 64)
-    Icon.DoClick = function()
-        local menu = DermaMenu()
-        menu:AddOption("Remove from FPP blocked models list", function() -- I use a DMenu so people don't accidentally click the wrong icon and go FFFUUU
-            RunConsoleCommand("FPP_RemoveBlockedModel", model)
-            Icon:Remove()
-            ShowBlockedModels.pan:InvalidateLayout()
-        end)
-        menu:Open()
+    local models = string.Explode('\0', util.Decompress(data))
+
+    for _, model in pairs(models) do
+        local Icon = vgui.Create("SpawnIcon", ShowBlockedModels.pan)
+        Icon:SetModel(model, 1)
+        Icon:SetSize(64, 64)
+        Icon.DoClick = function()
+            local menu = DermaMenu()
+            menu:AddOption("Remove from FPP blocked models list", function() -- I use a DMenu so people don't accidentally click the wrong icon and go FFFUUU
+                RunConsoleCommand("FPP_RemoveBlockedModel", model)
+                Icon:Remove()
+                ShowBlockedModels.pan:InvalidateLayout()
+            end)
+            menu:Open()
+        end
+        ShowBlockedModels.pan:AddItem(Icon)
     end
-    ShowBlockedModels.pan:AddItem(Icon)
 end
-usermessage.Hook("FPP_BlockedModel", RetrieveBlockedModels)
+net.Receive("FPP_BlockedModels", RetrieveBlockedModels)
 
 RetrieveRestrictedTool = function(um)
     local tool, admin, Teams = um, 0, {}--Settings when it's not a usermessage
