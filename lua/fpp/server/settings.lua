@@ -712,6 +712,27 @@ local function SendRestrictedTools(ply, cmd, args)
 end
 concommand.Add("FPP_SendRestrictTool", SendRestrictedTools)
 
+-- Fallback owner, will own entities after disconnect
+local function setFallbackOwner(ply, fallback)
+    ply.FPPFallbackOwner = fallback:SteamID()
+end
+
+local function changeFallbackOwner(ply, _, args)
+    local fallback = tonumber(args[1]) and Player(tonumber(args[1]))
+
+    if tonumber(args[1]) == -1 then
+        ply.FPPFallbackOwner = nil
+        FPP.Notify(ply, "Fallback owner set", true)
+        return
+    end
+
+    if not IsValid(fallback) or not fallback:IsPlayer() or fallback == ply then FPP.Notify(ply, "Player invalid", false) return end
+
+    setFallbackOwner(ply, fallback)
+    FPP.Notify(ply, "Fallback owner set", true)
+end
+concommand.Add("FPP_FallbackOwner", changeFallbackOwner)
+
 --Buddies!
 local function changeBuddies(ply, buddy, settings)
     if not IsValid(ply) then return end

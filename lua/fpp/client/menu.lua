@@ -1088,7 +1088,13 @@ function FPP.getPrivateSetting(setting)
     return privateSettingVars[setting]:GetBool()
 end
 
+local PrivateSettingsPanel
 function FPP.PrivateSettings(Panel)
+    PrivateSettingsPanel = PrivateSettingsPanel or Panel
+
+    Panel:ClearControls()
+    PrivateSettingsPanel:Clear()
+
     Panel:AddControl("Label", {Text = "\nPrivate settings menu\nUse to set settings that override server settings\n\nThese settings can only restrict you further.\n"})
     for k,v in pairs(PrivateSettings) do
         local box = vgui.Create("DCheckBoxLabel")
@@ -1106,6 +1112,19 @@ function FPP.PrivateSettings(Panel)
         Panel:AddItem(box)
     end
     Panel:AddControl("CheckBox", {Label = "I want to pick up players", Command = "cl_pickupplayers"})
+
+    local fallbackChoice = Panel:ComboBox("Fallback player")
+    fallbackChoice:AddChoice("None", -1, true)
+
+    for k, v in pairs(player.GetAll()) do
+        if v == LocalPlayer() then continue end
+        fallbackChoice:AddChoice(v:Nick(), v:UserID(), PrivateSettingsPanel.FallbackSelected == v:UserID())
+    end
+
+    fallbackChoice.OnSelect = function(_, _, nick, uid)
+        RunConsoleCommand("FPP_FallbackOwner", uid)
+        PrivateSettingsPanel.FallbackSelected = uid
+    end
 end
 
 local function makeMenus()
@@ -1121,6 +1140,9 @@ local function UpdateMenus()
     end
     if IsValid(BuddiesPanel) then
         FPP.BuddiesMenu(BuddiesPanel)
+    end
+    if IsValid(PrivateSettingsPanel) then
+        FPP.PrivateSettings(PrivateSettingsPanel)
     end
 end
 hook.Add("SpawnMenuOpen", "FPPMenus", UpdateMenus)
