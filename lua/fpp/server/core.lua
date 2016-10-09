@@ -44,14 +44,6 @@ hook.Add("PlayerSpawnProp", "FPP_SpawnProp", propSpawn) -- PlayerSpawnObject isn
 hook.Add("PlayerSpawnEffect", "FPP_SpawnEffect", propSpawn)
 hook.Add("PlayerSpawnRagdoll", "FPP_SpawnEffect", propSpawn)
 
---------------------------------------------------------------------------------------
---Helper function to get a setting from a player
---------------------------------------------------------------------------------------
-local function getPlySetting(ply, settingName)
-    local info = ply:GetInfo(settingName)
-    return info ~= "" and tobool(info)
-end
-
 /*---------------------------------------------------------------------------
 Setting owner when someone spawns something
 ---------------------------------------------------------------------------*/
