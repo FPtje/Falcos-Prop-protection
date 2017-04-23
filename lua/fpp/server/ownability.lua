@@ -490,33 +490,33 @@ hook.Add("PlayerDisconnected", "FPP_PlayerDisconnected", playerDisconnected)
 /*---------------------------------------------------------------------------
 Usergroup changed
 ---------------------------------------------------------------------------*/
-local setUserGroup = plyMeta.SetUserGroup
 local function userGroupRecalculate(ply)
     if not IsValid(ply) or not ply:IsPlayer() then return end
 
-    timer.Simple(0, function()
+    timer.Create("FPP_recalculate_cantouch_" .. ply:UserID(), 0, 1, function()
         FPP.recalculateCanTouch({ply}, ents.GetAll())
     end)
 end
 
+FPP.oldSetUserGroup = FPP.oldSetUserGroup or plyMeta.SetUserGroup
 function plyMeta:SetUserGroup(group)
     userGroupRecalculate(self)
 
-    return setUserGroup(self, group)
+    return FPP.oldSetUserGroup(self, group)
 end
 
-local oldSetNWString = entMeta.SetNWString
+FPP.oldSetNWString = FPP.oldSetNWString or entMeta.SetNWString
 function entMeta:SetNWString(str, val)
-    if str ~= "usergroup" then return oldSetNWString(self, str, val) end
+    if str ~= "usergroup" then return FPP.oldSetNWString(self, str, val) end
 
     userGroupRecalculate(self)
-    return oldSetNWString(self, str, val)
+    return FPP.oldSetNWString(self, str, val)
 end
 
-local oldSetNetworkedString = entMeta.SetNetworkedString
+FPP.oldSetNetworkedString = FPP.oldSetNetworkedString or entMeta.SetNetworkedString
 function entMeta:SetNetworkedString(str, val)
-    if str ~= "usergroup" then return oldSetNetworkedString(self, str, val) end
+    if str ~= "usergroup" then return FPP.oldSetNetworkedString(self, str, val) end
 
     userGroupRecalculate(self)
-    return oldSetNetworkedString(self, str, val)
+    return FPP.oldSetNetworkedString(self, str, val)
 end
