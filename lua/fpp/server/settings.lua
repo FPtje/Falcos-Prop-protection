@@ -642,12 +642,12 @@ concommand.Add("FPP_RemoveGroupTool", runIfAccess("FPP_Settings", GroupRemoveToo
 
 -- Args: 1 = player, 2 = group
 local function PlayerSetGroup(ply, cmd, args)
-    if not args[2] then FPP.Notify(ply, "Invalid argument(s)", false) return end
+    if not args[2] then FPP.Notify(ply, "Group not given", false) return end
 
     local name = args[1]
     local group = string.lower(args[2])
     if IsValid(Player(tonumber(name) or 0)) then name = Player(tonumber(name)):SteamID()
-    elseif not string.find(name, "STEAM") and name ~= "UNKNOWN" then FPP.Notify(ply, "Invalid argument(s)", false) return end
+    elseif not string.find(name, "STEAM") and name ~= "UNKNOWN" and name ~= "BOT" then FPP.Notify(ply, "Player not found", false) return end
 
     if not FPP.Groups[group] and (not CAMI or not CAMI.GetUsergroup(group)) then
         FPP.Notify(ply, "Group does not exists", false)
