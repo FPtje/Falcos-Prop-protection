@@ -537,9 +537,10 @@ end
 concommand.Add("FPP_AddGroup", runIfAccess("FPP_Settings", AddGroup))
 
 hook.Add("InitPostEntity", "FPP_Load_CAMI", function()
-    if not CAMI then return end
-    for groupName, _ in pairs(CAMI.GetUsergroups()) do
-        if not FPP.Groups[groupName] then AddGroup(Entity(0), "", {groupName, 1}) end
+    if CAMI then 
+        for groupName, _ in pairs(CAMI.GetUsergroups()) do
+            if not FPP.Groups[groupName] then AddGroup(Entity(0), "", {groupName, 1}) end
+        end
     end
 end)
 
