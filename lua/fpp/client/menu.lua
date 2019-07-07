@@ -961,7 +961,7 @@ function FPP.BuddiesMenu(Panel)
     BuddiesList:SetTall(150)
     BuddiesList:SetMultiSelect(false)
     BuddiesPanel:AddPanel(BuddiesList)
-    for k, v in pairs(FPP.Buddies) do
+    for k, v in SortedPairsByMemberValue(FPP.Buddies, "name", false) do
         BuddiesList:AddLine(k, v.name)
     end
     BuddiesList:SelectFirstItem()
