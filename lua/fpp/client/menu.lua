@@ -44,6 +44,12 @@ local function updatePrivs()
 end
 hook.Add("InitPostEntity", "FPP_Menu", updatePrivs)
 
+local function nickSortedPlayers()
+    local plys = player.GetAll()
+    table.sort(plys, function(a,b) return a:Nick() < b:Nick() end)
+    return plys
+end
+
 function FPP.AdminMenu(Panel)
     updatePrivs()
     AdminPanel = Panel
@@ -213,7 +219,7 @@ function FPP.AdminMenu(Panel)
     other:SetTextColor(Color(0, 0, 0, 255))
 
     local areplayers = false
-    for _, v in ipairs(player.GetAll()) do
+    for _, v in ipairs(nickSortedPlayers()) do
         if not IsValid(v) then continue end
         areplayers = true
         local rm = general:Add("DButton")
