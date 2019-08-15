@@ -122,6 +122,10 @@ hook.Add("PlayerSpawnedSWEP", "FPP.Spawn.SWEP", function(ply, ent)
     ent:CPPISetOwner(ply)
 end)
 
+hook.Add("PlayerSpawnedSENT", "FPP.Spawn.SENT", function(ply, ent)
+    ent:CPPISetOwner(ply)
+end)
+
 --------------------------------------------------------------------------------------
 --The protecting itself
 --------------------------------------------------------------------------------------
