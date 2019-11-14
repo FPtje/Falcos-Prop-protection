@@ -140,12 +140,12 @@ function FPP.Protect.PhysgunPickup(ply, ent)
     local skipReturn = false
 
     if isfunction(ent.PhysgunPickup) then
-        canTouch = ent:PhysgunPickup(ply, ent)
+        cantouch = ent:PhysgunPickup(ply, ent)
         -- Do not return the value, the gamemode will do this
         -- Allows other hooks to run
         skipReturn = true
     elseif ent.PhysgunPickup ~= nil then
-        canTouch = ent.PhysgunPickup
+        cantouch = ent.PhysgunPickup
     else
         cantouch = not ent:IsPlayer() and FPP.plyCanTouchEnt(ply, ent, "Physgun")
     end
@@ -167,12 +167,12 @@ function FPP.Protect.PhysgunReload(weapon, ply)
     local skipReturn = false
 
     if isfunction(ent.OnPhysgunReload) then
-        canTouch = ent:OnPhysgunReload(ply, ent)
+        cantouch = ent:OnPhysgunReload(ply, ent)
         -- Do not return the value, the gamemode will do this
         -- Allows other hooks to run
         skipReturn = true
     elseif ent.OnPhysgunReload ~= nil then
-        canTouch = ent.OnPhysgunReload
+        cantouch = ent.OnPhysgunReload
     else
         cantouch = not ent:IsPlayer() and FPP.plyCanTouchEnt(ply, ent, "Physgun")
     end
@@ -206,9 +206,9 @@ function FPP.Protect.GravGunPickup(ply, ent)
     local cantouch
 
     if isfunction(ent.GravGunPickup) then
-        canTouch = ent:GravGunPickup(ply, ent)
+        cantouch = ent:GravGunPickup(ply, ent)
     elseif ent.GravGunPickup ~= nil then
-        canTouch = ent.GravGunPickup
+        cantouch = ent.GravGunPickup
     else
         cantouch = not ent:IsPlayer() and FPP.plyCanTouchEnt(ply, ent, "Gravgun")
     end
@@ -250,12 +250,12 @@ function FPP.Protect.GravGunPunt(ply, ent)
     local skipReturn = false
 
     if isfunction(ent.GravGunPunt) then
-        canTouch = ent:GravGunPunt(ply, ent)
+        cantouch = ent:GravGunPunt(ply, ent)
         -- Do not return the value, the gamemode will do this
         -- Allows other hooks to run
         skipReturn = true
     elseif ent.GravGunPunt ~= nil then
-        canTouch = ent.GravGunPunt
+        cantouch = ent.GravGunPunt
     else
         cantouch = not ent:IsPlayer() and FPP.plyCanTouchEnt(ply, ent, "Gravgun")
     end
@@ -276,12 +276,12 @@ function FPP.Protect.PlayerUse(ply, ent)
     local skipReturn = false
 
     if isfunction(ent.PlayerUse) then
-        canTouch = ent:PlayerUse(ply, ent)
+        cantouch = ent:PlayerUse(ply, ent)
         -- Do not return the value, the gamemode will do this
         -- Allows other hooks to run
         skipReturn = true
     elseif ent.PlayerUse ~= nil then
-        canTouch = ent.PlayerUse
+        cantouch = ent.PlayerUse
     else
         cantouch = not ent:IsPlayer() and FPP.plyCanTouchEnt(ply, ent, "PlayerUse")
     end
