@@ -136,24 +136,22 @@ FPP.Protect = {}
 function FPP.Protect.PhysgunPickup(ply, ent)
     if not tobool(FPP.Settings.FPP_PHYSGUN1.toggle) then if FPP.UnGhost then FPP.UnGhost(ply, ent) end return end
     if not ent:IsValid() then return end
+    local cantouch
+    local skipReturn = false
 
-    if type(ent.PhysgunPickup) == "function" then
-        local val = ent:PhysgunPickup(ply, ent)
+    if isfunction(ent.PhysgunPickup) then
+        canTouch = ent:PhysgunPickup(ply, ent)
         -- Do not return the value, the gamemode will do this
-        if val ~= nil then return end
+        -- Allows other hooks to run
+        skipReturn = true
     elseif ent.PhysgunPickup ~= nil then
-        return ent.PhysgunPickup
+        canTouch = ent.PhysgunPickup
+    else
+        cantouch = not ent:IsPlayer() and FPP.plyCanTouchEnt(ply, ent, "Physgun")
     end
 
-    if ent:IsPlayer() then return end
-
-    local cantouch = FPP.plyCanTouchEnt(ply, ent, "Physgun")
-
-    if cantouch and FPP.UnGhost then
-        FPP.UnGhost(ply, ent)
-    end
-
-    if not cantouch then return false end
+    if cantouch and FPP.UnGhost then FPP.UnGhost(ply, ent) end
+    if not cantouch and not skipReturn then return false end
 end
 hook.Add("PhysgunPickup", "FPP.Protect.PhysgunPickup", FPP.Protect.PhysgunPickup)
 
@@ -165,24 +163,29 @@ function FPP.Protect.PhysgunReload(weapon, ply)
 
     if not IsValid(ent) then return end
 
-    if type(ent.OnPhysgunReload) == "function" then
-        local val = ent:OnPhysgunReload(weapon, ply)
+    local cantouch
+    local skipReturn = false
+
+    if isfunction(ent.OnPhysgunReload) then
+        canTouch = ent:OnPhysgunReload(ply, ent)
         -- Do not return the value, the gamemode will do this
-        if val ~= nil then return end
+        -- Allows other hooks to run
+        skipReturn = true
     elseif ent.OnPhysgunReload ~= nil then
-        return ent.OnPhysgunReload
+        canTouch = ent.OnPhysgunReload
+    else
+        cantouch = not ent:IsPlayer() and FPP.plyCanTouchEnt(ply, ent, "Physgun")
     end
 
-    local cantouch = FPP.plyCanTouchEnt(ply, ent, "Physgun")
+    if cantouch and FPP.UnGhost then FPP.UnGhost(ply, ent) end
+    if not cantouch and not skipReturn then return false end
 
-
-    if not cantouch then return false end
-    return --If I return true, I will break the double reload
+    -- Double reload breaks when returning true here
 end
 hook.Add("OnPhysgunReload", "FPP.Protect.PhysgunReload", FPP.Protect.PhysgunReload)
 
 function FPP.PhysgunFreeze(weapon, phys, ent, ply)
-    if type(ent.OnPhysgunFreeze) == "function" then
+    if isfunction(ent.OnPhysgunFreeze) then
         local val = ent:OnPhysgunFreeze(weapon, phys, ent, ply)
         -- Do not return the value, the gamemode will do this
         if val ~= nil then return end
@@ -200,21 +203,17 @@ function FPP.Protect.GravGunPickup(ply, ent)
 
     if ent:IsPlayer() then return end
 
-    if type(ent.GravGunPickup) == "function" then
-        local val = ent:GravGunPickup(ply, ent)
-        if val ~= nil then
-            if val == false then DropEntityIfHeld(ent) end
-            return
-        end
+    local cantouch
+
+    if isfunction(ent.GravGunPickup) then
+        canTouch = ent:GravGunPickup(ply, ent)
     elseif ent.GravGunPickup ~= nil then
-        if ent.GravGunPickup == false then DropEntityIfHeld(ent) end
-        return
+        canTouch = ent.GravGunPickup
+    else
+        cantouch = not ent:IsPlayer() and FPP.plyCanTouchEnt(ply, ent, "Gravgun")
     end
 
-    local cantouch = FPP.plyCanTouchEnt(ply, ent, "Gravgun")
-
-
-    if FPP.UnGhost and cantouch then FPP.UnGhost(ply, ent) end
+    if cantouch and FPP.UnGhost then FPP.UnGhost(ply, ent) end
     if cantouch == false then DropEntityIfHeld(ent) end
 end
 hook.Add("GravGunOnPickedUp", "FPP.Protect.GravGunPickup", FPP.Protect.GravGunPickup)
@@ -222,7 +221,7 @@ hook.Add("GravGunOnPickedUp", "FPP.Protect.GravGunPickup", FPP.Protect.GravGunPi
 function FPP.Protect.CanGravGunPickup(ply, ent)
     if not tobool(FPP.Settings.FPP_GRAVGUN1.toggle) or not IsValid(ent) then return end
 
-    if type(ent.GravGunPickup) == "function" then
+    if isfunction(ent.GravGunPickup) then
         -- Function name different than gamemode's (GravGunPickup vs GravGunPickupAllowed)
         -- Override FPP's behavior when implemented
         local val = ent:GravGunPickup(ply, ent)
@@ -247,24 +246,23 @@ function FPP.Protect.GravGunPunt(ply, ent)
 
     if not IsValid(ent) then DropEntityIfHeld(ent) return end
 
-    if type(ent.GravGunPunt) == "function" then
-        local val = ent:GravGunPunt(ply, ent)
-        if val ~= nil then
-            -- Gamemode does not drop the ent when entity returns false
-            if val == false then DropEntityIfHeld(ent) end
-            return
-        end
+    local cantouch
+    local skipReturn = false
+
+    if isfunction(ent.GravGunPunt) then
+        canTouch = ent:GravGunPunt(ply, ent)
+        -- Do not return the value, the gamemode will do this
+        -- Allows other hooks to run
+        skipReturn = true
     elseif ent.GravGunPunt ~= nil then
-        if ent.GravGunPunt == false then DropEntityIfHeld(ent) end
-        return ent.GravGunPunt
+        canTouch = ent.GravGunPunt
+    else
+        cantouch = not ent:IsPlayer() and FPP.plyCanTouchEnt(ply, ent, "Gravgun")
     end
 
-    local cantouch = FPP.plyCanTouchEnt(ply, ent, "Gravgun")
-
-
-    if FPP.UnGhost and cantouch then FPP.UnGhost(ply, ent) end
-    if cantouch == false then DropEntityIfHeld(ent) end
-    return cantouch
+    if cantouch and FPP.UnGhost then FPP.UnGhost(ply, ent) end
+    if not cantouch then DropEntityIfHeld(ent) end
+    if not cantouch and not skipReturn then return false end
 end
 hook.Add("GravGunPunt", "FPP.Protect.GravGunPunt", FPP.Protect.GravGunPunt)
 
@@ -274,18 +272,22 @@ function FPP.Protect.PlayerUse(ply, ent)
 
     if not IsValid(ent) then return end
 
-    if type(ent.PlayerUse) == "function" then
-        local val = ent:PlayerUse(ply, ent)
+    local cantouch
+    local skipReturn = false
+
+    if isfunction(ent.PlayerUse) then
+        canTouch = ent:PlayerUse(ply, ent)
         -- Do not return the value, the gamemode will do this
-        if val ~= nil then return end
+        -- Allows other hooks to run
+        skipReturn = true
     elseif ent.PlayerUse ~= nil then
-        return ent.PlayerUse
+        canTouch = ent.PlayerUse
+    else
+        cantouch = not ent:IsPlayer() and FPP.plyCanTouchEnt(ply, ent, "PlayerUse")
     end
 
-    local cantouch = FPP.plyCanTouchEnt(ply, ent, "PlayerUse")
-
-    if FPP.UnGhost and cantouch then FPP.UnGhost(ply, ent) end
-    return cantouch
+    if cantouch and FPP.UnGhost then FPP.UnGhost(ply, ent) end
+    if not cantouch and not skipReturn then return false end
 end
 hook.Add("PlayerUse", "FPP.Protect.PlayerUse", FPP.Protect.PlayerUse)
 
@@ -297,7 +299,7 @@ function FPP.Protect.EntityDamage(ent, dmginfo)
     local attacker = dmginfo:GetAttacker()
     local amount = dmginfo:GetDamage()
 
-    if type(ent.EntityDamage) == "function" then
+    if isfunction(ent.EntityDamage) then
         local val = ent:EntityDamage(ent, inflictor, attacker, amount, dmginfo)
         -- Do not return the value, the gamemode will do this
         if val ~= nil then return end
