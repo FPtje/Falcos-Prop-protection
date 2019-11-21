@@ -96,7 +96,7 @@ if undo then
     local Undo = {}
     local UndoPlayer
     function undo.AddEntity(ent, ...)
-        if type(ent) ~= "boolean" and IsValid(ent) then table.insert(Undo, ent) end
+        if not isbool(ent) and IsValid(ent) then table.insert(Undo, ent) end
         AddEntity(ent, ...)
     end
 
@@ -460,7 +460,7 @@ function FPP.Protect.CanTool(ply, trace, tool, ENT)
         for t, block in pairs(invalidToolData) do
             local clientInfo = string.lower(toolObj:GetClientInfo(t) or "")
             -- Check for number limits
-            if type(block) == "number" then
+            if isnumber(block) then
                 local num = tonumber(clientInfo) or 0
                 if num > block or num < -block then
                     FPP.Notify(ply, "The client settings of the tool are invalid!", false)
@@ -480,7 +480,7 @@ function FPP.Protect.CanTool(ply, trace, tool, ENT)
 
     local ent = IsEntity(ENT) and ENT or trace and trace.Entity
 
-    if IsEntity(ent) and type(ent.CanTool) == "function" and ent:GetClass() ~= "gmod_cameraprop" and ent:GetClass() ~= "gmod_rtcameraprop" then
+    if IsEntity(ent) and isfunction(ent.CanTool) and ent:GetClass() ~= "gmod_cameraprop" and ent:GetClass() ~= "gmod_rtcameraprop" then
         local val = ent:CanTool(ply, trace, tool, ENT)
         -- Do not return the value, the gamemode will do this
         if val ~= nil then return end
