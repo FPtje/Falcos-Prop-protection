@@ -138,13 +138,13 @@ local weaponClassTouchTypes = {
 }
 
 local function FilterEntityTable(t)
-  local filtered = {}
+    local filtered = {}
 
-  for i, ent in ipairs(t) do
-    if (not ent:IsWeapon()) and (not ent:IsPlayer()) then table.insert(filtered, ent) end
-  end
+    for i, ent in ipairs(t) do
+        if (not ent:IsWeapon()) and (not ent:IsPlayer()) then table.insert(filtered, ent) end
+    end
   
-  return filtered
+    return filtered
 end
 
 local function HUDPaint()
@@ -170,9 +170,9 @@ local function HUDPaint()
     --Show the owner:
     local ply = LocalPlayer()
 
-	local LAEnt2 = ents.FindAlongRay( LocalPlayer():EyePos(), LocalPlayer():EyePos() + EyeAngles():Forward() * 400)
+    local LAEnt2 = ents.FindAlongRay( LocalPlayer():EyePos(), LocalPlayer():EyePos() + EyeAngles():Forward() * 400)
 
-	local LAEnt = FilterEntityTable(LAEnt2)[1]
+    local LAEnt = FilterEntityTable(LAEnt2)[1]
     if not IsValid(LAEnt) then return end
 
     local weapon = ply:GetActiveWeapon()
