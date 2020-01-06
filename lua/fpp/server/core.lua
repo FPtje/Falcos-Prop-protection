@@ -148,6 +148,7 @@ function FPP.Protect.PhysgunPickup(ply, ent)
         cantouch = ent.PhysgunPickup
     else
         cantouch = not ent:IsPlayer() and FPP.plyCanTouchEnt(ply, ent, "Physgun")
+        skipReturn = ent:IsPlayer()
     end
 
     if cantouch and FPP.UnGhost then FPP.UnGhost(ply, ent) end
