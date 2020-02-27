@@ -250,7 +250,7 @@ function FPP.plyCanTouchEnt(ply, ent, touchType)
 end
 
 function FPP.entGetOwner(ent)
-    return ent.FPPOwner
+    return ent.FPPOwner or (IsValid(ent:GetCreator()) and ent:GetCreator():IsPlayer() and ent:GetCreator()) or nil
 end
 
 /*---------------------------------------------------------------------------
