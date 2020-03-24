@@ -96,7 +96,7 @@ local entSetCreator = ENTITY.SetCreator
 if entSetCreator then
     function ENTITY:SetCreator(ply)
         self:CPPISetOwner(ply)
-        entSetCreator(ply)
+        entSetCreator(self, ply)
     end
 end
 
