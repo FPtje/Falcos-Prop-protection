@@ -155,7 +155,7 @@ local function FilterEntityTable(t)
 end
 
 local boxBackground = Color(0, 0, 0, 110)
-local canTouchTextColor = Color(255, 0, 0, 255)
+local canTouchTextColor = Color(0, 255, 0, 255)
 local cannotTouchTextColor = Color(255, 0, 0, 255)
 local function HUDPaint()
     local i = 0
