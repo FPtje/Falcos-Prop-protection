@@ -86,13 +86,11 @@ local function DrawNotice(k, v, i)
     w = w
     h = h + 10
 
-    local col = Color(100, 30, 30, v.a * 0.4)
-
     if v.type then
-        col = Color(30, 100, 30, v.a * 0.4)
+        draw_RoundedBox(4, x - w - h + 16, y - 8, w + h, h, Color(30, 100, 30, v.a * 0.4))
+    else
+        draw_RoundedBox(4, x - w - h + 16, y - 8, w + h, h, Color(100, 30, 30, v.a * 0.4))
     end
-
-    draw_RoundedBox(4, x - w - h + 16, y - 8, w + h, h, col)
 
     -- Draw Icon
 
@@ -156,8 +154,10 @@ local function FilterEntityTable(t)
     return filtered
 end
 
+local boxBackground = Color(0, 0, 0, 110)
+local canTouchTextColor = Color(255, 0, 0, 255)
+local cannotTouchTextColor = Color(255, 0, 0, 255)
 local function HUDPaint()
-
     local i = 0
     for k, v in pairs(HUDNotes) do
         if v ~= 0 then
@@ -199,10 +199,11 @@ local function HUDPaint()
 
     surface_SetFont("Default")
     local w,h = surface_GetTextSize(reason)
-    local col = FPP.canTouchEnt(LAEnt, touchType) and Color(0, 255, 0, 255) or Color(255, 0, 0, 255)
+    local col = FPP.canTouchEnt(LAEnt, touchType) and canTouchTextColor or cannotTouchTextColor
+    local scrH = ScrH()
 
-    draw_RoundedBox(4, 0, ScrH() / 2 - h - 2, w + 10, 20, Color(0, 0, 0, 110))
-    draw_DrawText(reason, "Default", 5, ScrH() / 2 - h, col, 0)
+    draw_RoundedBox(4, 0, scrH / 2 - h - 2, w + 10, 20, boxBackground)
+    draw_DrawText(reason, "Default", 5, scrH / 2 - h, col, 0)
     surface_SetDrawColor(255, 255, 255, 255)
 end
 hook.Add("HUDPaint", "FPP_HUDPaint", HUDPaint)
