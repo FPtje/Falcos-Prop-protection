@@ -21,6 +21,8 @@ function TOOL:RightClick(trace)
     ent.ShareToolgun1 = nil
 
     ent.AllowedPlayers = nil
+
+    FPP.recalculateCanTouch(player.GetAll(), {ent})
     return true
 end
 
