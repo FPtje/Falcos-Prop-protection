@@ -234,11 +234,16 @@ Touch interface
 function FPP.plyCanTouchEnt(ply, ent, touchType)
     ent.FPPCanTouch = ent.FPPCanTouch or {}
     ent.FPPCanTouch[ply] = ent.FPPCanTouch[ply] or 0
+    ent.AllowedPlayers = ent.AllowedPlayers or {}
 
     local canTouch = ent.FPPCanTouch[ply]
     -- if an entity is constrained, return the least of the rights
     if ent.FPPRestrictConstraint and ent.FPPRestrictConstraint[ply] then
         canTouch = bit.band(ent.FPPRestrictConstraint[ply], ent.FPPCanTouch[ply])
+    end
+
+    if table.HasValue(ent.AllowedPlayers, ply) then
+        return true
     end
 
     -- return the answer for every touch type if parameter is empty
