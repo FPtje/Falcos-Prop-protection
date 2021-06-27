@@ -1,7 +1,8 @@
 {
     "ignore": [
         "*.git*",
-        "*.jpg"
+        "*.jpg",
+        "glualint.json"
     ],
     "tags": [
         "build"
