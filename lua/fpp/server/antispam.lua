@@ -148,7 +148,9 @@ local function e2AntiMinge()
         local ConstrainedEnts = constraint.GetAllConstrainedEntities(ent)
         if ConstrainedEnts then -- Includes original entity
             for _, v in pairs(ConstrainedEnts) do
-                v:SetCollisionGroup(COLLISION_GROUP_WEAPON)
+                if IsValid(v) then
+                    v:SetCollisionGroup(COLLISION_GROUP_WEAPON)
+                end
             end
         end
 
