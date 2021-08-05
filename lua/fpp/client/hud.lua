@@ -144,16 +144,6 @@ local weaponClassTouchTypes = {
     ["gmod_tool"] = "Toolgun",
 }
 
-local function FilterEntityTable(t)
-    local filtered = {}
-
-    for i, ent in ipairs(t) do
-        if (not ent:IsWeapon()) and (not ent:IsPlayer()) then table.insert(filtered, ent) end
-    end
-
-    return filtered
-end
-
 local boxBackground = Color(0, 0, 0, 110)
 local canTouchTextColor = Color(0, 255, 0, 255)
 local cannotTouchTextColor = Color(255, 0, 0, 255)
@@ -178,16 +168,14 @@ local function HUDPaint()
 
     --Show the owner:
     local ply = LocalPlayer()
-
-    local LAEnt2 = ents.FindAlongRay(ply:EyePos(), ply:EyePos() + EyeAngles():Forward() * 16384)
-
-    local LAEnt = FilterEntityTable(LAEnt2)[1]
-    if not IsValid(LAEnt) then return end
-    -- Prevent being able to see ownership through walls
     local eyeTrace = ply:GetEyeTrace()
+
     -- GetEyeTrace can return nil before InitPostEntity
     if eyeTrace == nil then return end
-    if eyeTrace.HitPos:DistToSqr(eyeTrace.StartPos) < LAEnt:NearestPoint(eyeTrace.StartPos):DistToSqr(eyeTrace.StartPos) then return end
+
+    local LAEnt = eyeTrace.Entity
+    local isFiltered = LAEnt:IsPlayer() or LAEnt:IsWeapon()
+    if not IsValid( LAEnt ) or isFiltered then return end
 
     local weapon = ply:GetActiveWeapon()
     local class = weapon:IsValid() and weapon:GetClass() or ""
