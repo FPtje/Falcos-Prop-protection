@@ -43,7 +43,6 @@ function FPP.NotifyAll(text, bool)
     end
 end
 
-
 local function getSettingsChangedEntities(settingsType, setting)
     local plys, entities = {}, {}
 

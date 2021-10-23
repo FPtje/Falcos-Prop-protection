@@ -117,7 +117,6 @@ function FPP.AntiSpam.DuplicatorSpam(ply)
     return true
 end
 
-
 local function IsEmpty(ent)
     local mins, maxs = ent:LocalToWorld(ent:OBBMins( )), ent:LocalToWorld(ent:OBBMaxs( ))
     local tr = {}
@@ -177,7 +176,7 @@ end)
 --More crash preventing:
 local function antiragdollcrash(ply)
     local pos = ply:GetEyeTraceNoCursor().HitPos
-    for _,v in ipairs(ents.FindInSphere(pos, 30)) do
+    for _, v in ipairs(ents.FindInSphere(pos, 30)) do
         if v:GetClass() == "func_door" then
             FPP.Notify(ply, "Can't spawn a ragdoll near doors", false)
             return false

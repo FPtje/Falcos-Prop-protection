@@ -356,7 +356,6 @@ local function onEntitiesCreated(ents)
     end
 end
 
-
 -- Make a queue of entities created per frame, so the server will send out a maximum-
 -- of one message per player per frame
 local entQueue = {}
@@ -371,7 +370,6 @@ hook.Add("OnEntityCreated", "FPP_EntityCreated", function(ent)
     if timer.Exists("FPP_OnEntityCreatedTimer") then return end
     timer.Create("FPP_OnEntityCreatedTimer", 0, 1, timerFunc)
 end)
-
 
 --[[-------------------------------------------------------------------------
 On entity removed
