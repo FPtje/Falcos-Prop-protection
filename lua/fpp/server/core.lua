@@ -1,7 +1,6 @@
 FPP = FPP or {}
 FPP.DisconnectedPlayers = FPP.DisconnectedPlayers or {}
 
-
 local PLAYER = FindMetaTable("Player")
 local ENTITY = FindMetaTable("Entity")
 
