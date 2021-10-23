@@ -393,10 +393,10 @@ local function RetrieveBlocked()
     end)
 end
 
-/*---------------------------------------------------------------------------
+--[[-------------------------------------------------------------------------
 Default blocked entities
 Only save in the database on first start
----------------------------------------------------------------------------*/
+---------------------------------------------------------------------------]]
 function FPP.AddDefaultBlocked(types, classname)
     classname = string.lower(classname)
 
@@ -921,9 +921,9 @@ local function refreshPrivatePlayerSettings(ply)
 end
 concommand.Add("_FPP_RefreshPrivatePlayerSettings", refreshPrivatePlayerSettings)
 
-/*---------------------------------------------------------------------------
+--[[-------------------------------------------------------------------------
 Load all FPP settings
----------------------------------------------------------------------------*/
+---------------------------------------------------------------------------]]
 function FPP.Init(callback)
     MySQLite.begin()
         MySQLite.queueQuery("CREATE TABLE IF NOT EXISTS FPP_BLOCKED1(id INTEGER NOT NULL, var VARCHAR(40) NOT NULL, setting VARCHAR(100) NOT NULL, PRIMARY KEY(id));")

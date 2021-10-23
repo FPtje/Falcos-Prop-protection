@@ -14,9 +14,9 @@
 
     Note: When both MySQLOO and tmysql4 modules are installed, MySQLOO is used by default.
 
-    /*---------------------------------------------------------------------------
+    ---------------------------------------------------------------------------
     Documentation
-    ---------------------------------------------------------------------------*/
+    ---------------------------------------------------------------------------
 
     MySQLite.initialize([config :: table]) :: No value
         Initialize MySQLite. Loads the config from either the config parameter OR the MySQLite_config global.

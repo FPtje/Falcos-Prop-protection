@@ -4,9 +4,9 @@ FPP.DisconnectedPlayers = FPP.DisconnectedPlayers or {}
 local PLAYER = FindMetaTable("Player")
 local ENTITY = FindMetaTable("Entity")
 
-/*---------------------------------------------------------------------------
+--[[-------------------------------------------------------------------------
 Checks is a model is blocked
----------------------------------------------------------------------------*/
+---------------------------------------------------------------------------]]
 function FPP.IsBlockedModel(model)
     if model == "" or not FPP.Settings or not FPP.Settings.FPP_BLOCKMODELSETTINGS1 or
         not tobool(FPP.Settings.FPP_BLOCKMODELSETTINGS1.toggle)
@@ -31,9 +31,9 @@ function FPP.IsBlockedModel(model)
     return false
 end
 
-/*---------------------------------------------------------------------------
+--[[-------------------------------------------------------------------------
 Prevents spawning a prop or effect when its model is blocked
----------------------------------------------------------------------------*/
+---------------------------------------------------------------------------]]
 local function propSpawn(ply, model)
     local blocked, msg = FPP.IsBlockedModel(model)
     if blocked then
@@ -46,9 +46,9 @@ hook.Add("PlayerSpawnProp", "FPP_SpawnProp", propSpawn) -- PlayerSpawnObject isn
 hook.Add("PlayerSpawnEffect", "FPP_SpawnEffect", propSpawn)
 hook.Add("PlayerSpawnRagdoll", "FPP_SpawnEffect", propSpawn)
 
-/*---------------------------------------------------------------------------
+--[[-------------------------------------------------------------------------
 Setting owner when someone spawns something
----------------------------------------------------------------------------*/
+---------------------------------------------------------------------------]]
 if cleanup then
     FPP.oldcleanup = FPP.oldcleanup or cleanup.Add
     function cleanup.Add(ply, Type, ent)
