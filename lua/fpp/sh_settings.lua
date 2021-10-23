@@ -114,7 +114,6 @@ CAMI.RegisterPrivilege{
     MinAccess = "admin"
 }
 
-
 CAMI.RegisterPrivilege{
     Name = "FPP_TouchOtherPlayersProps",
     MinAccess = "admin"

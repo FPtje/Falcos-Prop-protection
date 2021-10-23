@@ -568,7 +568,6 @@ function FPP.Protect.CanDrive(ply, ent)
 end
 hook.Add("CanDrive", "FPP.Protect.CanDrive", FPP.Protect.CanDrive)
 
-
 local function freezeDisconnected(ply)
     local SteamID = ply:SteamID()
 
