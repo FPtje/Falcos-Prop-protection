@@ -8,7 +8,7 @@ local ENTITY = FindMetaTable("Entity")
 /*---------------------------------------------------------------------------
 Checks is a model is blocked
 ---------------------------------------------------------------------------*/
-local function isBlocked(model)
+function FPP.IsBlockedModel(model)
     if model == "" or not FPP.Settings or not FPP.Settings.FPP_BLOCKMODELSETTINGS1 or
         not tobool(FPP.Settings.FPP_BLOCKMODELSETTINGS1.toggle)
         or not FPP.BlockedModels or not model then return end
@@ -36,7 +36,7 @@ end
 Prevents spawning a prop or effect when its model is blocked
 ---------------------------------------------------------------------------*/
 local function propSpawn(ply, model)
-    local blocked, msg = isBlocked(model)
+    local blocked, msg = FPP.IsBlockedModel(model)
     if blocked then
         FPP.Notify(ply, msg, false)
         return false
@@ -60,7 +60,7 @@ if cleanup then
 
         if not tobool(FPP.Settings.FPP_BLOCKMODELSETTINGS1.propsonly) then
             local model = ent.GetModel and ent:GetModel()
-            local blocked, msg = isBlocked(model)
+            local blocked, msg = FPP.IsBlockedModel(model)
 
             if blocked then
                 FPP.Notify(ply, msg, false)
