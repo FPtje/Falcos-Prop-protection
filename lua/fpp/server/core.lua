@@ -5,7 +5,7 @@ local PLAYER = FindMetaTable("Player")
 local ENTITY = FindMetaTable("Entity")
 
 --[[-------------------------------------------------------------------------
-Checks is a model is blocked
+Checks if a model is blocked
 ---------------------------------------------------------------------------]]
 function FPP.IsBlockedModel(model)
     if model == "" or not FPP.Settings or not FPP.Settings.FPP_BLOCKMODELSETTINGS1 or
