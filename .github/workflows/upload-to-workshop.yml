@@ -1,0 +1,35 @@
+name: Upload to the workshop
+on:
+  push:
+    branches:
+      - fp/upload-workshop-action
+jobs:
+  upload-to-workshop:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - uses: cachix/install-nix-action@v22
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+      # This part copied from https://github.com/Vurv78/gmod-upload
+      - name: Download SteamCMD
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install lib32gcc-s1
+          mkdir ~/Steam
+          curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | tar zxvf - -C ~/Steam
+      - name: Generate GMA and VDF file
+        run: nix run github:FPtje/gmosh -- --generate-vdf
+      - name: test
+        run: ls
+      - name: test
+        run: cat out.vdf
+      - name: test
+        run: file out.gma
+      # This part copied from https://github.com/Vurv78/gmod-upload
+      # - name: Run SteamCMD
+      #   shell: bash
+      #   run: |
+      #     ~/Steam/steamcmd.sh +login $STEAM_USERNAME $STEAM_PASSWORD +workshop_build_item $(pwd -P)/out.vdf +quit

@@ -2,7 +2,10 @@
     "ignore": [
         "*.git*",
         "*.jpg",
-        "glualint.json"
+        "glualint.json",
+        ".github",
+        "out.gma",
+        "out.vdf"
     ],
     "tags": [
         "build"
