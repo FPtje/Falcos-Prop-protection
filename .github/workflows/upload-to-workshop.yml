@@ -22,12 +22,6 @@ jobs:
           curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | tar zxvf - -C ~/Steam
       - name: Generate GMA and VDF file
         run: nix run github:FPtje/gmosh -- --generate-vdf
-      - name: test
-        run: ls
-      - name: test
-        run: cat out.vdf
-      - name: test
-        run: file out.gma
       # This part copied from https://github.com/Vurv78/gmod-upload
       - name: Run SteamCMD
         shell: bash
