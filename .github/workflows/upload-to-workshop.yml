@@ -27,3 +27,17 @@ jobs:
         shell: bash
         run: |
           ~/Steam/steamcmd.sh +login $STEAM_USERNAME $STEAM_PASSWORD +workshop_build_item $(pwd -P)/out.vdf +quit
+      - name: Print Errors
+        if: failure()
+        shell: bash
+        run: |
+          echo ~/Steam/logs/stderr.txt
+          echo "$(cat ~/Steam/logs/stderr.txt)"
+          echo
+          echo ~/Steam/logs/workshop_log.txt
+          echo "$(cat ~/Steam/logs/workshop_log.txt)"
+          echo
+          echo ~/Steam/workshopbuilds/depot_build_4000.log
+          echo "$(cat ~/Steam/workshopbuilds/depot_build_4000.log)"
+
+          exit 1
