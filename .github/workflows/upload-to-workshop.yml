@@ -6,6 +6,9 @@ on:
 jobs:
   upload-to-workshop:
     runs-on: ubuntu-latest
+    env:
+      STEAM_USERNAME: ${{ secrets.STEAM_USERNAME }}
+      STEAM_PASSWORD: ${{ secrets.STEAM_PASSWORD }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
