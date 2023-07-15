@@ -29,7 +29,7 @@ jobs:
       - name: test
         run: file out.gma
       # This part copied from https://github.com/Vurv78/gmod-upload
-      # - name: Run SteamCMD
-      #   shell: bash
-      #   run: |
-      #     ~/Steam/steamcmd.sh +login $STEAM_USERNAME $STEAM_PASSWORD +workshop_build_item $(pwd -P)/out.vdf +quit
+      - name: Run SteamCMD
+        shell: bash
+        run: |
+          ~/Steam/steamcmd.sh +login $STEAM_USERNAME $STEAM_PASSWORD +workshop_build_item $(pwd -P)/out.vdf +quit
