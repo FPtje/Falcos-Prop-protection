@@ -108,12 +108,12 @@ local function DrawNotice(k, v, i)
     local timeleft = v.time_visible - (SysTime() - v.recv)
 
     -- Cartoon style about to go thing
-    if (timeleft < 0.8) then
+    if (timeleft < 0.5) then
         ideal_x = ScrW() / 2 + w * 0.5 + 200
     end
 
     -- Gone!
-    if (timeleft < 0.5) then
+    if (timeleft < 0.2) then
         ideal_y = ScrH() + 50
     end
 
