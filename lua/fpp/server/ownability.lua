@@ -67,7 +67,13 @@ Touch calculations
 ---------------------------------------------------------------------------]]
 local hardWhiteListed = { -- things that mess up when not allowed
     ["worldspawn"] = true, -- constraints with the world
-    ["gmod_anchor"] = true -- used in slider constraints with world
+    ["gmod_anchor"] = true, -- used in slider constraints with world
+    ["gmod_wire_hologram"] = true, -- created by Expression2, has no physics, but can be constrained to other entities
+    ["phys_spring"] = true, -- https://developer.valvesoftware.com/wiki/Phys_spring
+    ["env_projectedtexture"] = true, -- https://developer.valvesoftware.com/wiki/Env_projectedtexture
+    ["keyframe_rope"] = true, -- https://developer.valvesoftware.com/wiki/Keyframe_rope
+    ["env_skypaint"] = true, -- https://developer.valvesoftware.com/wiki/Env_skypaint
+    ["env_fog_controller"] = true -- https://developer.valvesoftware.com/wiki/Env_fog_controller
 }
 local function calculateCanTouchForType(ply, ent, touchType)
     if not IsValid(ent) then return false, 0 end
