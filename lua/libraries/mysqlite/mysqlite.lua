@@ -14,9 +14,9 @@
 
     Note: When both MySQLOO and tmysql4 modules are installed, MySQLOO is used by default.
 
-    ---------------------------------------------------------------------------
+    /*---------------------------------------------------------------------------
     Documentation
-    ---------------------------------------------------------------------------
+    ---------------------------------------------------------------------------*/
 
     MySQLite.initialize([config :: table]) :: No value
         Initialize MySQLite. Loads the config from either the config parameter OR the MySQLite_config global.
@@ -122,26 +122,53 @@ local moduleLoaded
 local function loadMySQLModule()
     if moduleLoaded or not MySQLite_config or not MySQLite_config.EnableMySQL then return end
 
-    local moo, tmsql = file.Exists("bin/gmsv_mysqloo_*.dll", "LUA"), file.Exists("bin/gmsv_tmysql4_*.dll", "LUA")
+    local moo, tmsql = util.IsBinaryModuleInstalled("mysqloo"), util.IsBinaryModuleInstalled("tmysql4")
 
     if not moo and not tmsql then
-        error("Could not find a suitable MySQL module. Supported modules are MySQLOO and tmysql4.")
+        error("Could not find a suitable MySQL module. Please either:\n  - Install tmysql. It can be obtained from https://github.com/SuperiorServers/gm_tmysql4\n  - Install MySQLOO. It can be obtained from https://github.com/FredyH/MySQLOO\nDue to this error, MySQL is disabled. This means that SQLite is used instead to store data.")
     end
     moduleLoaded = true
 
-    require(moo and tmsql and MySQLite_config.Preferred_module or
-            moo and "mysqloo"                                  or
-            "tmysql4")
+    require(
+        moo and tmsql and MySQLite_config.Preferred_module or
+        moo and "mysqloo" or
+        tmsql and "tmysql4"
+    )
 
     multistatements = CLIENT_MULTI_STATEMENTS
 
     mysqlOO = mysqloo
     TMySQL = tmysql
+
+    if MySQLite_config.Preferred_module == "tmysql4" then
+        if not tmsql then
+            ErrorNoHalt("The preferred module for MySQL is selected to be tmysql4. However, tmysql4 does not appear to be installed. Please either:\n  - Install tmysql. It can be obtained from https://github.com/SuperiorServers/gm_tmysql4\n  - Select MySQLOO as the preferred module for MySQL. MySQLOO appears to be installed.")
+            return
+        end
+
+        if not tmysql.Version or tmysql.Version < 4.1 then
+            MsgC(Color(255, 0, 0), "Using older tmysql version, please consider updating!\n")
+            MsgC(Color(255, 0, 0), "Newer Version: https://github.com/SuperiorServers/gm_tmysql4\n")
+        end
+
+        -- Turns tmysql.Connect into tmysql.Initialize if they're using an older version.
+        TMySQL.Connect = tmysql.Version and tmysql.Version >= 4.1 and TMySQL.Connect or TMySQL.initialize
+        TMySQL.SetOption = tmysql.Version and tmysql.Version >= 4.1 and TMySQL.SetOption or TMySQL.Option
+    else
+        if not moo then
+            ErrorNoHalt("The preferred module for MySQL is selected to be MySQLOO. However, MySQLOO does not appear to be installed. Please either:\n  - Install MySQLOO. It can be obtained from https://github.com/FredyH/MySQLOO\n  - Select tmysql4 as the preferred module for MySQL. tmysql4 appears to be installed.")
+        end
+    end
 end
 loadMySQLModule()
 
 module("MySQLite")
 
+-- Helper function to return the first value found when iterating over a table.
+-- Replaces the now deprecated table.GetFirstValue
+local function arbitraryTableValue(tbl)
+    for _, v in pairs(tbl) do return v end
+end
 
 function initialize(config)
     MySQLite_config = config or MySQLite_config
@@ -263,7 +290,7 @@ local function msOOQuery(sqlText, callback, errorCallback, queryValue)
     end
 
     queryObject.onSuccess = function()
-        local res = queryValue and data and data[1] and table.GetFirstValue(data[1]) or not queryValue and data or nil
+        local res = queryValue and data and data[1] and arbitraryTableValue(data[1]) or not queryValue and data or nil
         if callback then callback(res, queryObject:lastInsert()) end
     end
     queryObject:start()
@@ -279,7 +306,7 @@ local function tmsqlQuery(sqlText, callback, errorCallback, queryValue)
         end
 
         if not res.data or #res.data == 0 then res.data = nil end -- compatibility with other backends
-        if queryValue and callback then return callback(res.data and res.data[1] and table.GetFirstValue(res.data[1]) or nil) end
+        if queryValue and callback then return callback(res.data and res.data[1] and arbitraryTableValue(res.data[1]) or nil) end
         if callback then callback(res.data, res.lastid) end
     end
 
@@ -329,6 +356,7 @@ local function onConnected()
     local GM = _G.GAMEMODE or _G.GM
 
     hook.Call("DatabaseInitialized", GM.DatabaseInitialized and GM or nil)
+
 end
 
 msOOConnect = function(host, username, password, database_name, database_port)
@@ -349,11 +377,17 @@ msOOConnect = function(host, username, password, database_name, database_port)
 end
 
 local function tmsqlConnect(host, username, password, database_name, database_port)
-    local db, err = TMySQL.initialize(host, username, password, database_name, database_port, nil, MySQLite_config.MultiStatements and multistatements or nil)
+    local db, err = TMySQL.Connect(host, username, password, database_name, database_port, nil, MySQLite_config.MultiStatements and multistatements or nil)
     if err then error("Connection failed! " .. err ..  "\n") end
 
     databaseObject = db
     onConnected()
+
+    if (TMySQL.Version and TMySQL.Version >= 4.1) then
+        hook.Add("Think", "MySQLite:tmysqlPoll", function()
+            db:Poll()
+        end)
+    end
 end
 
 function connectToMySQL(host, username, password, database_name, database_port)
