@@ -267,9 +267,9 @@ end
 Networking
 ---------------------------------------------------------------------------]]
 util.AddNetworkString("FPP_TouchabilityData")
--- Sends 13	 + 8 + 5 + 20 = 46 bits of ownership data per entity
+-- Sends 13 + 8 + 5 + 20 = 46 bits of ownership data per entity
 local function netWriteEntData(ply, ent)
-    -- EntIndex for when it's out of the PVS of the player
+    -- EntIndex for when it's out of the PVS of the player`
     net.WriteUInt(ent:EntIndex(), 13)
 
     local owner = ent:CPPIGetOwner()
@@ -278,40 +278,47 @@ local function netWriteEntData(ply, ent)
     net.WriteUInt(ent.FPPConstraintReasons and ent.FPPConstraintReasons[ply] or ent.FPPCanTouchWhy[ply], 20) -- reasons
 end
 
-function FPP.plySendTouchData(ply, ents)
-    local count = #ents
+local touchabilityDataQueue = {}
+local function startNetWriteQueue()
+    if timer.Exists( "FPP_TouchabilityQueue" ) then return end
 
-    if count == 0 then return end
+    timer.Create( "FPP_TouchabilityQueue", 0, 0, function()
+        for ply, entities in pairs(touchabilityDataQueue) do
+            if not IsValid(ply) then touchabilityDataQueue[ply] = nil continue end
 
-    -- The net message gets too big with 5826 or more entities. In that case,
-    -- break up the input into chunks and recurse per chunk.
-    --
-    -- Note: There is still a limit on the entity count! If there are too many
-    -- entities, the client will disconnect with "Disconnect: Client 0
-    -- overflowed reliable channel..". That limit is above the entity limit of
-    -- 16384, though, so no further work is done to lift that limit.
-    local count_limit = 5825
-    if count > count_limit then
-        local accumulator = {}
-        for i = 1, count do
-            table.insert(accumulator, ents[i])
-            if i % count_limit == 0 then
-                FPP.plySendTouchData(ply, accumulator)
-                table.Empty(accumulator)
+            local count = 0
+            net.Start("FPP_TouchabilityData")
+            for ent in pairs(entities) do
+                netWriteEntData(ply, ent)
+                count = count + 1
+                touchabilityDataQueue[ply][ent] = nil
+                if count >= 1400 then break end
+            end
+            net.WriteBit(1)
+            net.Send(ply)
+
+            if not next(touchabilityDataQueue[ply]) then
+                touchabilityDataQueue[ply] = nil
             end
         end
-        if #accumulator > 0 then
-            FPP.plySendTouchData(ply, accumulator)
+
+        if not next(touchabilityDataQueue) then
+            timer.Remove( "FPP_TouchabilityQueue" )
+            return
         end
-        return
+    end )
+end
+
+function FPP.plySendTouchData(ply, ents)
+    local count = #ents
+    if count == 0 then return end
+
+    touchabilityDataQueue[ply] = touchabilityDataQueue[ply] or {}
+    for _, ent in ipairs(ents) do
+        touchabilityDataQueue[ply][ent] = true
     end
 
-    net.Start("FPP_TouchabilityData")
-        for i = 1, count do
-            netWriteEntData(ply, ents[i])
-            net.WriteBit(i == count)
-        end
-    net.Send(ply)
+    startNetWriteQueue()
 end
 
 --[[-------------------------------------------------------------------------
