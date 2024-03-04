@@ -257,7 +257,7 @@ function FPP.plyCanTouchEnt(ply, ent, touchType)
         entTable.AllowedPlayers = {}
     end
 
-    local canTouch = FPPCanTouch[ply]
+    local canTouch = entCanTouch[ply]
     -- if an entity is constrained, return the least of the rights
     local entRestrictConstraint = entTable.FPPRestrictConstraint
     if entRestrictConstraint and entRestrictConstraint[ply] then
