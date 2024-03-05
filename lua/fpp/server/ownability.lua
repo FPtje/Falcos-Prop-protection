@@ -247,7 +247,8 @@ function FPP.plyCanTouchEnt(ply, ent, touchType)
     local entTable = ent:GetTable()
     local entCanTouch = entTable.FPPCanTouch
     if not entCanTouch then
-        entTable.FPPCanTouch = {}
+        entCanTouch = {}
+        entTable.FPPCanTouch = entCanTouch
     end
 
     entCanTouch[ply] = entCanTouch[ply] or 0
