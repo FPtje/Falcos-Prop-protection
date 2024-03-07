@@ -269,7 +269,7 @@ Networking
 util.AddNetworkString("FPP_TouchabilityData")
 -- Sends 13 + 8 + 5 + 20 = 46 bits of ownership data per entity
 local function netWriteEntData(ply, ent)
-    -- EntIndex for when it's out of the PVS of the player`
+    -- EntIndex for when it's out of the PVS of the player
     net.WriteUInt(ent:EntIndex(), 13)
 
     local owner = ent:CPPIGetOwner()
