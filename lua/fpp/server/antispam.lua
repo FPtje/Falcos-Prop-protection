@@ -47,6 +47,11 @@ function FPP.AntiSpam.CreateEntity(ply, ent, IsDuplicate)
     if not tobool(FPP.Settings.FPP_ANTISPAM1.toggle) then return end
     local phys = ent:GetPhysicsObject()
     if not phys:IsValid() then return end
+    local entTable = ent:GetTable()
+    -- Some spawn methods trigger different paths to this function, causing an
+    -- entity to be counted multiple times for antispam.
+    if entTable.FPPCountedForAntispam then return end
+    entTable.FPPCountedForAntispam = true
 
     local shouldRegister = hook.Call("FPP_ShouldRegisterAntiSpam", nil, ply, ent, IsDuplicate)
     if shouldRegister == false then return end
