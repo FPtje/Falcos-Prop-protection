@@ -2,6 +2,9 @@ FPP = FPP or {}
 local plyMeta = FindMetaTable("Player")
 local entMeta = FindMetaTable("Entity")
 
+local bit_bor = bit.bor
+local bit_band = bit.band
+
 --[[-------------------------------------------------------------------------
 Entity data explanation.
 Every ent has a field FPPCanTouch. This is a table with one entry per player.
@@ -241,14 +244,25 @@ end
 Touch interface
 ---------------------------------------------------------------------------]]
 function FPP.plyCanTouchEnt(ply, ent, touchType)
-    ent.FPPCanTouch = ent.FPPCanTouch or {}
-    ent.FPPCanTouch[ply] = ent.FPPCanTouch[ply] or 0
-    ent.AllowedPlayers = ent.AllowedPlayers or {}
+    local entTable = ent:GetTable()
+    local entCanTouch = entTable.FPPCanTouch
+    if not entCanTouch then
+        entCanTouch = {}
+        entTable.FPPCanTouch = entCanTouch
+    end
 
-    local canTouch = ent.FPPCanTouch[ply]
+    entCanTouch[ply] = entCanTouch[ply] or 0
+
+    local allowedPlayers = entTable.AllowedPlayers
+    if not allowedPlayers then
+        entTable.AllowedPlayers = {}
+    end
+
+    local canTouch = entCanTouch[ply]
     -- if an entity is constrained, return the least of the rights
-    if ent.FPPRestrictConstraint and ent.FPPRestrictConstraint[ply] then
-        canTouch = bit.band(ent.FPPRestrictConstraint[ply], ent.FPPCanTouch[ply])
+    local entRestrictConstraint = entTable.FPPRestrictConstraint
+    if entRestrictConstraint and entRestrictConstraint[ply] then
+        canTouch = bit_band(entRestrictConstraint[ply], entCanTouch[ply])
     end
 
     -- return the answer for every touch type if parameter is empty
@@ -256,11 +270,11 @@ function FPP.plyCanTouchEnt(ply, ent, touchType)
         return canTouch
     end
 
-    return bit.bor(canTouch, touchTypes[touchType]) == canTouch
+    return bit_bor(canTouch, touchTypes[touchType]) == canTouch
 end
 
 function FPP.entGetOwner(ent)
-    return ent.FPPOwner
+    return ent:GetTable().FPPOwner
 end
 
 --[[-------------------------------------------------------------------------
