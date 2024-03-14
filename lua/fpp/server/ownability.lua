@@ -299,13 +299,22 @@ local function startNetWriteQueue()
 
     timer.Create( "FPP_TouchabilityQueue", 0, 0, function()
         for ply, entities in pairs(touchabilityDataQueue) do
-            if not IsValid(ply) then touchabilityDataQueue[ply] = nil continue end
+            if not IsValid(ply) then
+                touchabilityDataQueue[ply] = nil
+                continue
+            end
 
             local count = 0
             net.Start("FPP_TouchabilityData")
             for ent in pairs(entities) do
+                if not IsValid(ent) then
+                    touchabilityDataQueue[ply][ent] = nil
+                    continue
+                end
+
                 net.WriteBit(0)
                 netWriteEntData(ply, ent)
+
                 count = count + 1
                 touchabilityDataQueue[ply][ent] = nil
                 if count >= 1400 then
