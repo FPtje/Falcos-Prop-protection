@@ -24,8 +24,10 @@ local reasons = {
     [8] = "player", -- you can't pick up players
 }
 
-local function receiveTouchData(len)
-    repeat
+local function receiveTouchData()
+    for i = 1, 1400 do
+        if net.ReadBit() == 1 then break end
+
         local entIndex = net.ReadUInt(13)
         local ownerIndex = net.ReadUInt(8)
         local touchability = net.ReadUInt(5)
@@ -34,7 +36,7 @@ local function receiveTouchData(len)
         FPP.entOwners[entIndex] = ownerIndex
         FPP.entTouchability[entIndex] = touchability
         FPP.entTouchReasons[entIndex] = reason
-    until net.ReadBit() == 1
+    end
 end
 net.Receive("FPP_TouchabilityData", receiveTouchData)
 

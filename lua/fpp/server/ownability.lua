@@ -286,10 +286,11 @@ local function netWriteEntData(ply, ent)
     -- EntIndex for when it's out of the PVS of the player
     net.WriteUInt(ent:EntIndex(), 13)
 
+    local entTable = ent:GetTable()
     local owner = ent:CPPIGetOwner()
     net.WriteUInt(IsValid(owner) and owner:EntIndex() or -1, 8)
-    net.WriteUInt(ent.FPPRestrictConstraint and ent.FPPRestrictConstraint[ply] or ent.FPPCanTouch[ply], 5) -- touchability information
-    net.WriteUInt(ent.FPPConstraintReasons and ent.FPPConstraintReasons[ply] or ent.FPPCanTouchWhy[ply], 20) -- reasons
+    net.WriteUInt(entTable.FPPRestrictConstraint and entTable.FPPRestrictConstraint[ply] or entTable.FPPCanTouch[ply], 5) -- touchability information
+    net.WriteUInt(entTable.FPPConstraintReasons and entTable.FPPConstraintReasons[ply] or entTable.FPPCanTouchWhy[ply], 20) -- reasons
 end
 
 local touchabilityDataQueue = {}
@@ -303,10 +304,15 @@ local function startNetWriteQueue()
             local count = 0
             net.Start("FPP_TouchabilityData")
             for ent in pairs(entities) do
+                net.WriteBit(0)
                 netWriteEntData(ply, ent)
                 count = count + 1
                 touchabilityDataQueue[ply][ent] = nil
-                if count >= 1400 then break end
+                if count >= 1400 then
+                    net.WriteBit(1)
+                    net.Send(ply)
+                    break
+                end
             end
             net.WriteBit(1)
             net.Send(ply)
