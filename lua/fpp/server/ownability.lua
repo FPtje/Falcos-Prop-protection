@@ -373,7 +373,8 @@ end
 On entity created
 ---------------------------------------------------------------------------]]
 local function onEntitiesCreated(ents)
-    local send = {}
+    -- Table from player to list of entities that need to be networked
+    local sendToPlayers = {}
 
     for _, ent in pairs(ents) do
         if not IsValid(ent) then continue end
@@ -391,13 +392,16 @@ local function onEntitiesCreated(ents)
         if blockedEnts[ent:GetClass()] then continue end
 
         for _, ply in ipairs(player.GetAll()) do
-            FPP.calculateCanTouch(ply, ent)
+            local changed = FPP.calculateCanTouch(ply, ent)
+            -- Only send data that has been changed
+            if not changed then continue end
+            sendToPlayers[ply] = sendToPlayers[ply] or {}
+            table.insert(sendToPlayers[ply], ent)
         end
-        table.insert(send, ent)
     end
 
-    for _, ply in ipairs(player.GetAll()) do
-        FPP.plySendTouchData(ply, send)
+    for ply, entsToSend in pairs(sendToPlayers) do
+        FPP.plySendTouchData(ply, entsToSend)
     end
 end
 
