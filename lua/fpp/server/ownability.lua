@@ -281,15 +281,17 @@ end
 Networking
 ---------------------------------------------------------------------------]]
 util.AddNetworkString("FPP_TouchabilityData")
--- Sends 32 + 32 + 5 + 20 = 89 bits of ownership data per entity
+-- Sends 13 + 8 + 5 + 20 = 46 bits of ownership data per entity
 local function netWriteEntData(ply, ent)
     -- EntIndex for when it's out of the PVS of the player
-    net.WriteUInt(ent:EntIndex(), 32)
+    net.WriteUInt(ent:EntIndex(), 13)
 
     local owner = ent:CPPIGetOwner()
-    net.WriteUInt(IsValid(owner) and owner:EntIndex() or -1, 32)
-    net.WriteUInt(ent.FPPRestrictConstraint and ent.FPPRestrictConstraint[ply] or ent.FPPCanTouch[ply], 5) -- touchability information
-    net.WriteUInt(ent.FPPConstraintReasons and ent.FPPConstraintReasons[ply] or ent.FPPCanTouchWhy[ply], 20) -- reasons
+    net.WriteUInt(IsValid(owner) and owner:EntIndex() or -1, 8)
+
+    local entTable = ent:GetTable()
+    net.WriteUInt(entTable.FPPRestrictConstraint and entTable.FPPRestrictConstraint[ply] or entTable.FPPCanTouch[ply], 5) -- touchability information
+    net.WriteUInt(entTable.FPPConstraintReasons and entTable.FPPConstraintReasons[ply] or entTable.FPPCanTouchWhy[ply], 20) -- reasons
 end
 
 function FPP.plySendTouchData(ply, ents)
