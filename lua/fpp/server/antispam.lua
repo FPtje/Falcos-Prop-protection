@@ -161,7 +161,16 @@ local function e2AntiMinge()
     e2func[3] = function(self, args, ...)
         if not tobool(FPP.Settings.FPP_GLOBALSETTINGS1.antie2minge) then return applyForce(self, args, ...) end
 
-        local ent = args[2][1](self, args[2]) -- Assumption: args[2][1] is a function
+        local arg_2_1 = args[2][1]
+        local ent
+        -- In some earlier versions of wiremod, args[2][1] is a function, which
+        -- can be called to get the target entity.
+        if isfunction(arg_2_1) then
+            ent = args[2][1](self, args[2])
+        else
+            -- In later versions, the first argument is the entity
+            ent = args[1]
+        end
         if not IsValid(ent) or ent:CPPIGetOwner() ~= self.player then return end
 
         -- No check for whether the entity has already been no collided with players
@@ -195,6 +204,7 @@ hook.Add("InitPostEntity", "FPP.InitializeAntiMinge", function()
 
     e2AntiMinge()
 end)
+e2AntiMinge()
 
 --More crash preventing:
 local function antiragdollcrash(ply)
