@@ -2,7 +2,8 @@
     "ignore": [
         "*.git*",
         "*.jpg",
-        "glualint.json"
+        "glualint.json",
+        ".vscode/settings.json"
     ],
     "tags": [
         "build"
