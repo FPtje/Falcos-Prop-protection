@@ -499,8 +499,11 @@ function FPP.RecalculateConstrainedEntities(players, entities)
 end
 
 local entMem = {}
-local function constraintRemovedTimer(ent1, ent2, constrainedEnts)
-    if not IsValid(ent1) and not IsValid(ent2) or not constrainedEnts then return end
+local function constraintRemovedTimer(ent1, ent2)
+    if not IsValid(ent1) and not IsValid(ent2) then return end
+
+    local constrainedEnts = constraint.GetAllConstrainedEntities(ent1)
+    if not constrainedEnts then return end
 
     FPP.RecalculateConstrainedEntities(player.GetAll(), constrainedEnts)
     entMem = {}
@@ -516,10 +519,7 @@ local function handleConstraintRemoved(ent)
     entMem[ent1] = true
     entMem[ent2] = true
 
-    -- the constraint is still there, so this includes ent2's constraints
-    local constrainedEnts = constraint.GetAllConstrainedEntities(ent1)
-
-    timer.Create("FPP_ConstraintRemovedTimer", 0, 1, function() constraintRemovedTimer(ent1, ent2, constrainedEnts) end)
+    timer.Create("FPP_ConstraintRemovedTimer", 0, 1, function() constraintRemovedTimer(ent1, ent2) end)
 end
 
 local function onEntityRemoved(ent)
