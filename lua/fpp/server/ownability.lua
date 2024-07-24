@@ -504,8 +504,8 @@ local function constraintRemovedTimer(ent1, ent2)
     entMem = {}
 
     local allConstrainedEnts = {}
-    table.Add(allConstrainedEnts, constrainedEnts1)
-    table.Add(allConstrainedEnts, constrainedEnts2)
+    table.Add(allConstrainedEnts, constraint.GetAllConstrainedEntities(ent1))
+    table.Add(allConstrainedEnts, constraint.GetAllConstrainedEntities(ent2))
     FPP.RecalculateConstrainedEntities(player.GetAll(), allConstrainedEnts)
 end
 
