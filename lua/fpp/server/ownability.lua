@@ -503,11 +503,10 @@ local function constraintRemovedTimer(ent1, ent2)
     if not IsValid(ent1) and not IsValid(ent2) then return end
     entMem = {}
 
-    local constrainedEnts1 = constraint.GetAllConstrainedEntities(ent1)
-    FPP.RecalculateConstrainedEntities(player.GetAll(), constrainedEnts1)
-
-    local constrainedEnts2 = constraint.GetAllConstrainedEntities(ent2)
-    FPP.RecalculateConstrainedEntities(player.GetAll(), constrainedEnts2)
+    local allConstrainedEnts = {}
+    table.Add(allConstrainedEnts, constrainedEnts1)
+    table.Add(allConstrainedEnts, constrainedEnts2)
+    FPP.RecalculateConstrainedEntities(player.GetAll(), allConstrainedEnts)
 end
 
 local function handleConstraintRemoved(ent)
