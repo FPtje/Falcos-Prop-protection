@@ -4,7 +4,7 @@ FPP.AntiSpam = FPP.AntiSpam or {}
 function FPP.AntiSpam.GhostFreeze(ent, phys)
     ent:SetRenderMode(RENDERMODE_TRANSCOLOR)
     ent:DrawShadow(false)
-    ent.OldColor = ent.OldColor or ent:GetColor()
+    ent.OldColor = IsColor(ent.OldColor) or ent:GetColor()
     ent.StartPos = ent:GetPos()
     ent:SetColor(Color(ent.OldColor.r, ent.OldColor.g, ent.OldColor.b, ent.OldColor.a - 155))
 
@@ -23,7 +23,7 @@ function FPP.UnGhost(ply, ent)
         ent:DrawShadow(true)
         if ent.OldCollisionGroup then ent:SetCollisionGroup(ent.OldCollisionGroup) ent.OldCollisionGroup = nil end
 
-        if ent.OldColor then
+        if IsColor(ent.OldColor) then
             ent:SetColor(Color(ent.OldColor.r, ent.OldColor.g, ent.OldColor.b, ent.OldColor.a))
         end
         ent.OldColor = nil
