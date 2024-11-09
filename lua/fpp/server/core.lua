@@ -689,9 +689,9 @@ hook.Add("PlayerInitialSpawn", "FPP.PlayerInitialSpawn", FPP.PlayerInitialSpawn)
 
 local backup = ENTITY.FireBullets
 local blockedEffects = {
-    ["particleeffect"] = true, 
-    ["smoke"] = true, 
-    ["vortdispel"] = true, 
+    ["particleeffect"] = true,
+    ["smoke"] = true,
+    ["vortdispel"] = true,
     ["helicoptermegabomb"] = true,
 }
 
