@@ -688,11 +688,16 @@ end
 hook.Add("PlayerInitialSpawn", "FPP.PlayerInitialSpawn", FPP.PlayerInitialSpawn)
 
 local backup = ENTITY.FireBullets
-local blockedEffects = {"particleeffect", "smoke", "vortdispel", "helicoptermegabomb"}
+local blockedEffects = {
+    ["particleeffect"] = true, 
+    ["smoke"] = true, 
+    ["vortdispel"] = true, 
+    ["helicoptermegabomb"] = true,
+}
 
 function ENTITY:FireBullets(bullet, ...)
     if not bullet.TracerName then return backup(self, bullet, ...) end
-    if table.HasValue(blockedEffects, string.lower(bullet.TracerName)) then
+    if blockedEffects[string.lower(bullet.TracerName)] then
         bullet.TracerName = ""
     end
     return backup(self, bullet, ...)
