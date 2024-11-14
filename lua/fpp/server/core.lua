@@ -130,6 +130,14 @@ hook.Add("PlayerSpawnedSWEP", "FPP.Spawn.SWEP", function(ply, ent)
     ent:CPPISetOwner(ply)
 end)
 
+hook.Add("WeaponEquip", "FPP.Spawn.Weapon", function(weapon)
+    timer.Simple(0, function()
+        if IsValid(weapon) and IsValid(weapon:GetOwner()) and not IsValid(weapon:CPPIGetOwner()) then
+            weapon:CPPISetOwner(weapon:GetOwner())
+        end
+    end)
+end)
+
 hook.Add("PlayerSpawnedSENT", "FPP.Spawn.SENT", function(ply, ent)
     ent:CPPISetOwner(ply)
 end)
