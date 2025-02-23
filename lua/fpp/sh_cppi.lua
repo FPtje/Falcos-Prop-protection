@@ -62,38 +62,33 @@ if SERVER then
 
     function ENTITY:CPPISetOwnerUID(UID)
         local ply = UID and player.GetByUniqueID(tostring(UID)) or nil
-        if UID and not IsValid(ply) then return false end
+        if UID and not ply then return false end
         return self:CPPISetOwner(ply)
     end
 
     function ENTITY:CPPICanTool(ply, tool)
         local cantool = FPP.Protect.CanTool(ply, nil, tool, self)
-        if cantool == nil then cantool = true end
-        return cantool
+        return cantool == nil and true or cantool
     end
 
     function ENTITY:CPPICanPhysgun(ply)
         local canphysgun = FPP.Protect.PhysgunPickup(ply, self)
-        if canphysgun == nil then canphysgun = true end
-        return canphysgun
+        return canphysgun == nil and true or canphysgun
     end
 
     function ENTITY:CPPICanPickup(ply)
         local canpickup = FPP.Protect.CanGravGunPickup(ply, self)
-        if canpickup == nil then canpickup = true end
-        return canpickup
+        return canpickup == nil and true or canpickup
     end
 
     function ENTITY:CPPICanPunt(ply)
         local canpunt = FPP.Protect.GravGunPunt(ply, self)
-        if canpunt == nil then canpunt = true end
-        return canpunt
+        return canpunt == nil and true or canpunt
     end
 
     function ENTITY:CPPICanUse(ply)
         local canuse = FPP.Protect.PlayerUse(ply, self)
-        if canuse == nil then canuse = true end
-        return canuse
+        return canuse == nil and true or canuse
     end
 
     function ENTITY:CPPICanDamage(ply)
@@ -107,14 +102,12 @@ if SERVER then
 
     function ENTITY:CPPIDrive(ply)
         local candrive = FPP.Protect.CanDrive(ply, self)
-        if candrive == nil then candrive = true end
-        return candrive
+        return candrive == nil and true or candrive
     end
 
     function ENTITY:CPPICanProperty(ply, property)
         local canproperty = FPP.Protect.CanProperty(ply, property, self)
-        if canproperty == nil then canproperty = true end
-        return canproperty
+        return canproperty == nil and true or canproperty
     end
 
     function ENTITY:CPPICanEditVariable(ply, key, val, editTbl)
