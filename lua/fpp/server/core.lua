@@ -147,7 +147,7 @@ function FPP.Protect.PhysgunPickup(ply, ent, internal)
     local cantouch
     local skipReturn = false
 
-    if isfunction(ent.PhysgunPickup) then
+    if not internal and isfunction(ent.PhysgunPickup) then
         cantouch = ent:PhysgunPickup(ply, ent)
         -- Do not return the value, the gamemode will do this
         -- Allows other hooks to run
@@ -214,7 +214,7 @@ function FPP.Protect.GravGunPickup(ply, ent, internal)
 
     local cantouch
 
-    if isfunction(ent.GravGunPickup) then
+    if not internal and isfunction(ent.GravGunPickup) then
         cantouch = ent:GravGunPickup(ply, ent)
     elseif ent.GravGunPickup ~= nil then
         cantouch = ent.GravGunPickup
@@ -260,7 +260,7 @@ function FPP.Protect.GravGunPunt(ply, ent, internal)
     local cantouch
     local skipReturn = false
 
-    if isfunction(ent.GravGunPunt) then
+    if not internal and isfunction(ent.GravGunPunt) then
         cantouch = ent:GravGunPunt(ply, ent)
         -- Do not return the value, the gamemode will do this
         -- Allows other hooks to run
@@ -286,7 +286,7 @@ function FPP.Protect.PlayerUse(ply, ent, internal)
     local cantouch
     local skipReturn = false
 
-    if isfunction(ent.PlayerUse) then
+    if not internal and isfunction(ent.PlayerUse) then
         cantouch = ent:PlayerUse(ply, ent)
         -- Do not return the value, the gamemode will do this
         -- Allows other hooks to run
@@ -303,14 +303,14 @@ end
 hook.Add("PlayerUse", "FPP.Protect.PlayerUse", FPP.Protect.PlayerUse)
 
 --EntityDamage
-function FPP.Protect.EntityDamage(ent, dmginfo)
+function FPP.Protect.EntityDamage(ent, dmginfo, internal)
     if not IsValid(ent) then return end
 
     local inflictor = dmginfo:GetInflictor()
     local attacker = dmginfo:GetAttacker()
     local amount = dmginfo:GetDamage()
 
-    if isfunction(ent.EntityDamage) then
+    if not internal and isfunction(ent.EntityDamage) then
         local val = ent:EntityDamage(ent, inflictor, attacker, amount, dmginfo)
         -- Do not return the value, the gamemode will do this
         if val ~= nil then return end

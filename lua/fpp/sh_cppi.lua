@@ -96,8 +96,8 @@ if SERVER then
         dmginfo:SetAttacker(ply)
         dmginfo:SetDamage(-1)
 
-        FPP.Protect.EntityDamage(self, dmginfo)
-        return dmginfo:GetDamage() ~= 0
+        FPP.Protect.EntityDamage(self, dmginfo, true)
+        return dmginfo:GetDamage() == -1
     end
 
     function ENTITY:CPPIDrive(ply)
