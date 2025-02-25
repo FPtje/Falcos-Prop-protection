@@ -141,8 +141,8 @@ end)
 FPP.Protect = {}
 
 --Physgun Pickup
-function FPP.Protect.PhysgunPickup(ply, ent)
-    if not tobool(FPP.Settings.FPP_PHYSGUN1.toggle) then if FPP.UnGhost then FPP.UnGhost(ply, ent) end return end
+function FPP.Protect.PhysgunPickup(ply, ent, internal)
+    if not tobool(FPP.Settings.FPP_PHYSGUN1.toggle) and not internal then if FPP.UnGhost then FPP.UnGhost(ply, ent) end return end
     if not ent:IsValid() then return end
     local cantouch
     local skipReturn = false
@@ -159,7 +159,7 @@ function FPP.Protect.PhysgunPickup(ply, ent)
         skipReturn = ent:IsPlayer()
     end
 
-    if cantouch and FPP.UnGhost then FPP.UnGhost(ply, ent) end
+    if cantouch and not internal and FPP.UnGhost then FPP.UnGhost(ply, ent) end
     if not cantouch and not skipReturn then return false end
 end
 hook.Add("PhysgunPickup", "FPP.Protect.PhysgunPickup", FPP.Protect.PhysgunPickup)
@@ -205,7 +205,7 @@ end
 hook.Add("OnPhysgunFreeze", "FPP.Protect.PhysgunFreeze", FPP.PhysgunFreeze)
 
 --Gravgun pickup
-function FPP.Protect.GravGunPickup(ply, ent)
+function FPP.Protect.GravGunPickup(ply, ent, internal)
     if not tobool(FPP.Settings.FPP_GRAVGUN1.toggle) then return end
 
     if not IsValid(ent) then return end -- You don't want a cross when looking at the floor while holding right mouse
@@ -222,7 +222,7 @@ function FPP.Protect.GravGunPickup(ply, ent)
         cantouch = not ent:IsPlayer() and FPP.plyCanTouchEnt(ply, ent, "Gravgun")
     end
 
-    if cantouch and FPP.UnGhost then FPP.UnGhost(ply, ent) end
+    if cantouch and not internal and FPP.UnGhost then FPP.UnGhost(ply, ent) end
     if cantouch == false then DropEntityIfHeld(ent) end
 end
 hook.Add("GravGunOnPickedUp", "FPP.Protect.GravGunPickup", FPP.Protect.GravGunPickup)
@@ -250,7 +250,7 @@ end
 hook.Add("GravGunPickupAllowed", "FPP.Protect.CanGravGunPickup", FPP.Protect.CanGravGunPickup)
 
 --Gravgun punting
-function FPP.Protect.GravGunPunt(ply, ent)
+function FPP.Protect.GravGunPunt(ply, ent, internal)
     if tobool(FPP.Settings.FPP_GRAVGUN1.noshooting) then DropEntityIfHeld(ent) return false end
     -- Do not reason further if gravgun protection is disabled.
     if not tobool(FPP.Settings.FPP_GRAVGUN1.toggle) then return end
@@ -271,14 +271,14 @@ function FPP.Protect.GravGunPunt(ply, ent)
         cantouch = not ent:IsPlayer() and FPP.plyCanTouchEnt(ply, ent, "Gravgun")
     end
 
-    if cantouch and FPP.UnGhost then FPP.UnGhost(ply, ent) end
+    if cantouch and not internal and FPP.UnGhost then FPP.UnGhost(ply, ent) end
     if not cantouch then DropEntityIfHeld(ent) end
     if not cantouch and not skipReturn then return false end
 end
 hook.Add("GravGunPunt", "FPP.Protect.GravGunPunt", FPP.Protect.GravGunPunt)
 
 --PlayerUse
-function FPP.Protect.PlayerUse(ply, ent)
+function FPP.Protect.PlayerUse(ply, ent, internal)
     if not tobool(FPP.Settings.FPP_PLAYERUSE1.toggle) then return end
 
     if not IsValid(ent) then return end
@@ -297,7 +297,7 @@ function FPP.Protect.PlayerUse(ply, ent)
         cantouch = not ent:IsPlayer() and FPP.plyCanTouchEnt(ply, ent, "PlayerUse")
     end
 
-    if cantouch and FPP.UnGhost then FPP.UnGhost(ply, ent) end
+    if cantouch and not internal and FPP.UnGhost then FPP.UnGhost(ply, ent) end
     if not cantouch and not skipReturn then return false end
 end
 hook.Add("PlayerUse", "FPP.Protect.PlayerUse", FPP.Protect.PlayerUse)

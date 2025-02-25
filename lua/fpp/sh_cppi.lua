@@ -72,7 +72,7 @@ if SERVER then
     end
 
     function ENTITY:CPPICanPhysgun(ply)
-        local canphysgun = FPP.Protect.PhysgunPickup(ply, self)
+        local canphysgun = FPP.Protect.PhysgunPickup(ply, self, true)
         return canphysgun == nil and true or canphysgun
     end
 
@@ -82,12 +82,12 @@ if SERVER then
     end
 
     function ENTITY:CPPICanPunt(ply)
-        local canpunt = FPP.Protect.GravGunPunt(ply, self)
+        local canpunt = FPP.Protect.GravGunPunt(ply, self, true)
         return canpunt == nil and true or canpunt
     end
 
     function ENTITY:CPPICanUse(ply)
-        local canuse = FPP.Protect.PlayerUse(ply, self)
+        local canuse = FPP.Protect.PlayerUse(ply, self, true)
         return canuse == nil and true or canuse
     end
 
