@@ -227,10 +227,10 @@ function FPP.Protect.GravGunPickup(ply, ent, internal)
 end
 hook.Add("GravGunOnPickedUp", "FPP.Protect.GravGunPickup", FPP.Protect.GravGunPickup)
 
-function FPP.Protect.CanGravGunPickup(ply, ent)
+function FPP.Protect.CanGravGunPickup(ply, ent, internal)
     if not tobool(FPP.Settings.FPP_GRAVGUN1.toggle) or not IsValid(ent) then return end
 
-    if isfunction(ent.GravGunPickup) then
+    if not internal and isfunction(ent.GravGunPickup) then
         -- Function name different than gamemode's (GravGunPickup vs GravGunPickupAllowed)
         -- Override FPP's behavior when implemented
         local val = ent:GravGunPickup(ply, ent)
