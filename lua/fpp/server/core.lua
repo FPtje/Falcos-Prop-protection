@@ -142,7 +142,7 @@ FPP.Protect = {}
 
 --Physgun Pickup
 function FPP.Protect.PhysgunPickup(ply, ent, internal)
-    if not tobool(FPP.Settings.FPP_PHYSGUN1.toggle) and not internal then if FPP.UnGhost then FPP.UnGhost(ply, ent) end return end
+    if not tobool(FPP.Settings.FPP_PHYSGUN1.toggle) then if not internal and FPP.UnGhost then FPP.UnGhost(ply, ent) end return end
     if not ent:IsValid() then return end
     local cantouch
     local skipReturn = false
