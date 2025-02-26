@@ -251,7 +251,7 @@ hook.Add("GravGunPickupAllowed", "FPP.Protect.CanGravGunPickup", FPP.Protect.Can
 
 --Gravgun punting
 function FPP.Protect.GravGunPunt(ply, ent, internal)
-    if tobool(FPP.Settings.FPP_GRAVGUN1.noshooting) then DropEntityIfHeld(ent) return false end
+    if tobool(FPP.Settings.FPP_GRAVGUN1.noshooting) then if not internal then DropEntityIfHeld(ent) end return false end
     -- Do not reason further if gravgun protection is disabled.
     if not tobool(FPP.Settings.FPP_GRAVGUN1.toggle) then return end
 
