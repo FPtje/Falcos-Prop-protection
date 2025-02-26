@@ -223,7 +223,7 @@ function FPP.Protect.GravGunPickup(ply, ent, internal)
     end
 
     if cantouch and not internal and FPP.UnGhost then FPP.UnGhost(ply, ent) end
-    if cantouch == false then DropEntityIfHeld(ent) end
+    if cantouch == false and not internal then DropEntityIfHeld(ent) end
 end
 hook.Add("GravGunOnPickedUp", "FPP.Protect.GravGunPickup", FPP.Protect.GravGunPickup)
 
@@ -255,7 +255,7 @@ function FPP.Protect.GravGunPunt(ply, ent, internal)
     -- Do not reason further if gravgun protection is disabled.
     if not tobool(FPP.Settings.FPP_GRAVGUN1.toggle) then return end
 
-    if not IsValid(ent) then DropEntityIfHeld(ent) return end
+    if not IsValid(ent) then if not internal then DropEntityIfHeld(ent) end return end
 
     local cantouch
     local skipReturn = false
@@ -272,7 +272,7 @@ function FPP.Protect.GravGunPunt(ply, ent, internal)
     end
 
     if cantouch and not internal and FPP.UnGhost then FPP.UnGhost(ply, ent) end
-    if not cantouch then DropEntityIfHeld(ent) end
+    if not cantouch and not internal then DropEntityIfHeld(ent) end
     if not cantouch and not skipReturn then return false end
 end
 hook.Add("GravGunPunt", "FPP.Protect.GravGunPunt", FPP.Protect.GravGunPunt)
