@@ -72,32 +72,28 @@ if SERVER then
     end
 
     function ENTITY:CPPICanPhysgun(ply)
-        local canphysgun = FPP.Protect.PhysgunPickup(ply, self, true)
-        return canphysgun == nil and true or canphysgun
+        if not tobool(FPP.Settings.FPP_PHYSGUN1.toggle) then return true end
+        return FPP.plyCanTouchEnt(ply, self, "Physgun")
     end
 
     function ENTITY:CPPICanPickup(ply)
-        local canpickup = FPP.Protect.CanGravGunPickup(ply, self)
-        return canpickup == nil and true or canpickup
+        if not tobool(FPP.Settings.FPP_PHYSGUN1.toggle) then return true end
+        return FPP.plyCanTouchEnt(ply, self, "Gravgun")
     end
 
     function ENTITY:CPPICanPunt(ply)
-        local canpunt = FPP.Protect.GravGunPunt(ply, self, true)
-        return canpunt == nil and true or canpunt
+        if not tobool(FPP.Settings.FPP_GRAVGUN1.toggle) then return true end
+        return FPP.plyCanTouchEnt(ply, self, "Gravgun")
     end
 
     function ENTITY:CPPICanUse(ply)
-        local canuse = FPP.Protect.PlayerUse(ply, self, true)
-        return canuse == nil and true or canuse
+        if not tobool(FPP.Settings.FPP_PLAYERUSE1.toggle) then return true end
+        return FPP.plyCanTouchEnt(ply, self, "PlayerUse")
     end
 
     function ENTITY:CPPICanDamage(ply)
-        local dmginfo = DamageInfo()
-        dmginfo:SetAttacker(ply)
-        dmginfo:SetDamage(-1)
-
-        FPP.Protect.EntityDamage(self, dmginfo, true)
-        return dmginfo:GetDamage() == -1
+        if not tobool(FPP.Settings.FPP_ENTITYDAMAGE1.toggle) then return true end
+        return FPP.plyCanTouchEnt(ply, self, "EntityDamage")
     end
 
     function ENTITY:CPPIDrive(ply)
