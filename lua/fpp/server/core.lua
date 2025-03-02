@@ -141,13 +141,13 @@ end)
 FPP.Protect = {}
 
 --Physgun Pickup
-function FPP.Protect.PhysgunPickup(ply, ent, internal)
-    if not tobool(FPP.Settings.FPP_PHYSGUN1.toggle) then if not internal and FPP.UnGhost then FPP.UnGhost(ply, ent) end return end
+function FPP.Protect.PhysgunPickup(ply, ent)
+    if not tobool(FPP.Settings.FPP_PHYSGUN1.toggle) then if FPP.UnGhost then FPP.UnGhost(ply, ent) end return end
     if not ent:IsValid() then return end
     local cantouch
     local skipReturn = false
 
-    if not internal and isfunction(ent.PhysgunPickup) then
+    if isfunction(ent.PhysgunPickup) then
         cantouch = ent:PhysgunPickup(ply, ent)
         -- Do not return the value, the gamemode will do this
         -- Allows other hooks to run
@@ -159,7 +159,7 @@ function FPP.Protect.PhysgunPickup(ply, ent, internal)
         skipReturn = ent:IsPlayer()
     end
 
-    if cantouch and not internal and FPP.UnGhost then FPP.UnGhost(ply, ent) end
+    if cantouch and FPP.UnGhost then FPP.UnGhost(ply, ent) end
     if not cantouch and not skipReturn then return false end
 end
 hook.Add("PhysgunPickup", "FPP.Protect.PhysgunPickup", FPP.Protect.PhysgunPickup)
@@ -205,7 +205,7 @@ end
 hook.Add("OnPhysgunFreeze", "FPP.Protect.PhysgunFreeze", FPP.PhysgunFreeze)
 
 --Gravgun pickup
-function FPP.Protect.GravGunPickup(ply, ent, internal)
+function FPP.Protect.GravGunPickup(ply, ent)
     if not tobool(FPP.Settings.FPP_GRAVGUN1.toggle) then return end
 
     if not IsValid(ent) then return end -- You don't want a cross when looking at the floor while holding right mouse
@@ -214,7 +214,7 @@ function FPP.Protect.GravGunPickup(ply, ent, internal)
 
     local cantouch
 
-    if not internal and isfunction(ent.GravGunPickup) then
+    if isfunction(ent.GravGunPickup) then
         cantouch = ent:GravGunPickup(ply, ent)
     elseif ent.GravGunPickup ~= nil then
         cantouch = ent.GravGunPickup
@@ -222,15 +222,15 @@ function FPP.Protect.GravGunPickup(ply, ent, internal)
         cantouch = not ent:IsPlayer() and FPP.plyCanTouchEnt(ply, ent, "Gravgun")
     end
 
-    if cantouch and not internal and FPP.UnGhost then FPP.UnGhost(ply, ent) end
-    if cantouch == false and not internal then DropEntityIfHeld(ent) end
+    if cantouch and FPP.UnGhost then FPP.UnGhost(ply, ent) end
+    if cantouch == false then DropEntityIfHeld(ent) end
 end
 hook.Add("GravGunOnPickedUp", "FPP.Protect.GravGunPickup", FPP.Protect.GravGunPickup)
 
-function FPP.Protect.CanGravGunPickup(ply, ent, internal)
+function FPP.Protect.CanGravGunPickup(ply, ent)
     if not tobool(FPP.Settings.FPP_GRAVGUN1.toggle) or not IsValid(ent) then return end
 
-    if not internal and isfunction(ent.GravGunPickup) then
+    if isfunction(ent.GravGunPickup) then
         -- Function name different than gamemode's (GravGunPickup vs GravGunPickupAllowed)
         -- Override FPP's behavior when implemented
         local val = ent:GravGunPickup(ply, ent)
@@ -250,17 +250,17 @@ end
 hook.Add("GravGunPickupAllowed", "FPP.Protect.CanGravGunPickup", FPP.Protect.CanGravGunPickup)
 
 --Gravgun punting
-function FPP.Protect.GravGunPunt(ply, ent, internal)
-    if tobool(FPP.Settings.FPP_GRAVGUN1.noshooting) then if not internal then DropEntityIfHeld(ent) end return false end
+function FPP.Protect.GravGunPunt(ply, ent)
+    if tobool(FPP.Settings.FPP_GRAVGUN1.noshooting) then DropEntityIfHeld(ent) return false end
     -- Do not reason further if gravgun protection is disabled.
     if not tobool(FPP.Settings.FPP_GRAVGUN1.toggle) then return end
 
-    if not IsValid(ent) then if not internal then DropEntityIfHeld(ent) end return end
+    if not IsValid(ent) then DropEntityIfHeld(ent) return end
 
     local cantouch
     local skipReturn = false
 
-    if not internal and isfunction(ent.GravGunPunt) then
+    if isfunction(ent.GravGunPunt) then
         cantouch = ent:GravGunPunt(ply, ent)
         -- Do not return the value, the gamemode will do this
         -- Allows other hooks to run
@@ -271,14 +271,14 @@ function FPP.Protect.GravGunPunt(ply, ent, internal)
         cantouch = not ent:IsPlayer() and FPP.plyCanTouchEnt(ply, ent, "Gravgun")
     end
 
-    if cantouch and not internal and FPP.UnGhost then FPP.UnGhost(ply, ent) end
-    if not cantouch and not internal then DropEntityIfHeld(ent) end
+    if cantouch and FPP.UnGhost then FPP.UnGhost(ply, ent) end
+    if not cantouch then DropEntityIfHeld(ent) end
     if not cantouch and not skipReturn then return false end
 end
 hook.Add("GravGunPunt", "FPP.Protect.GravGunPunt", FPP.Protect.GravGunPunt)
 
 --PlayerUse
-function FPP.Protect.PlayerUse(ply, ent, internal)
+function FPP.Protect.PlayerUse(ply, ent)
     if not tobool(FPP.Settings.FPP_PLAYERUSE1.toggle) then return end
 
     if not IsValid(ent) then return end
@@ -286,7 +286,7 @@ function FPP.Protect.PlayerUse(ply, ent, internal)
     local cantouch
     local skipReturn = false
 
-    if not internal and isfunction(ent.PlayerUse) then
+    if isfunction(ent.PlayerUse) then
         cantouch = ent:PlayerUse(ply, ent)
         -- Do not return the value, the gamemode will do this
         -- Allows other hooks to run
@@ -297,20 +297,20 @@ function FPP.Protect.PlayerUse(ply, ent, internal)
         cantouch = not ent:IsPlayer() and FPP.plyCanTouchEnt(ply, ent, "PlayerUse")
     end
 
-    if cantouch and not internal and FPP.UnGhost then FPP.UnGhost(ply, ent) end
+    if cantouch and FPP.UnGhost then FPP.UnGhost(ply, ent) end
     if not cantouch and not skipReturn then return false end
 end
 hook.Add("PlayerUse", "FPP.Protect.PlayerUse", FPP.Protect.PlayerUse)
 
 --EntityDamage
-function FPP.Protect.EntityDamage(ent, dmginfo, internal)
+function FPP.Protect.EntityDamage(ent, dmginfo)
     if not IsValid(ent) then return end
 
     local inflictor = dmginfo:GetInflictor()
     local attacker = dmginfo:GetAttacker()
     local amount = dmginfo:GetDamage()
 
-    if not internal and isfunction(ent.EntityDamage) then
+    if isfunction(ent.EntityDamage) then
         local val = ent:EntityDamage(ent, inflictor, attacker, amount, dmginfo)
         -- Do not return the value, the gamemode will do this
         if val ~= nil then return end
@@ -549,6 +549,7 @@ end
 hook.Add("CanTool", "FPP.Protect.CanTool", FPP.Protect.CanTool)
 
 function FPP.Protect.CanEditVariable(ent, ply, key, varVal, editTbl)
+    if not tobool(FPP.Settings.FPP_TOOLGUN1.toggle) then return true end
     local val = FPP.Protect.CanProperty(ply, "editentity", ent)
     if val ~= nil then return val end
 end
@@ -556,6 +557,7 @@ hook.Add("CanEditVariable", "FPP.Protect.CanEditVariable", FPP.Protect.CanEditVa
 
 function FPP.Protect.CanProperty(ply, property, ent)
     -- Use Toolgun because I'm way too lazy to make a new type
+    if not tobool(FPP.Settings.FPP_TOOLGUN1.toggle) then return true end
     local cantouch = FPP.plyCanTouchEnt(ply, ent, "Toolgun")
 
     if not cantouch then return false end
@@ -564,6 +566,7 @@ hook.Add("CanProperty", "FPP.Protect.CanProperty", FPP.Protect.CanProperty)
 
 function FPP.Protect.CanDrive(ply, ent)
     -- Use Toolgun because I'm way too lazy to make a new type
+    if not tobool(FPP.Settings.FPP_TOOLGUN1.toggle) then return true end
     local cantouch = FPP.plyCanTouchEnt(ply, ent, "Toolgun")
 
     if not cantouch then return false end
