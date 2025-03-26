@@ -42,11 +42,11 @@ end
 local WEAPON = FindMetaTable("Weapon")
 
 function WEAPON:CPPIGetOwner()
-    local owner = ENTITY.CPPIGetOwner(self)
-    if IsValid(owner) then return owner end
+    local owner, ownerid = ENTITY.CPPIGetOwner(self)
+    if IsValid(owner) then return owner, ownerid end
 
     owner = ENTITY.GetOwner(self)
-    if not owner:IsValid() then return nil, self.FPPOwnerID end
+    if not owner:IsValid() or not owner:IsPlayer() then return SERVER and owner or nil, self.FPPOwnerID end
 
     return owner, owner:UniqueID()
 end
