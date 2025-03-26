@@ -45,7 +45,10 @@ function WEAPON:CPPIGetOwner()
     local owner = ENTITY.CPPIGetOwner(self)
     if IsValid(owner) then return owner end
 
-    return ENTITY.GetOwner(self)
+    owner = ENTITY.GetOwner(self)
+    if not owner:IsValid() then return nil, self.FPPOwnerID end
+
+    return owner, owner:UniqueID()
 end
 
 if SERVER then
