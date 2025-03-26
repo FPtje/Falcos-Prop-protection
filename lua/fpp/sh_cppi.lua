@@ -32,10 +32,20 @@ function PLAYER:CPPIGetFriends()
 end
 
 local ENTITY = FindMetaTable("Entity")
+
 function ENTITY:CPPIGetOwner()
     local Owner = FPP.entGetOwner(self)
     if not IsValid(Owner) or not Owner:IsPlayer() then return SERVER and Owner or nil, self.FPPOwnerID end
     return Owner, Owner:UniqueID()
+end
+
+local WEAPON = FindMetaTable("Weapon")
+
+function WEAPON:CPPIGetOwner()
+    local owner = ENTITY.CPPIGetOwner(self)
+    if IsValid(owner) then return owner end
+
+    return ENTITY.GetOwner(self)
 end
 
 if SERVER then
