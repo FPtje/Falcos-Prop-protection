@@ -273,8 +273,10 @@ function FPP.plyCanTouchEnt(ply, ent, touchType)
     return bit_bor(canTouch, touchTypes[touchType]) == canTouch
 end
 
+local GetTable = entMeta.GetTable
+
 function FPP.entGetOwner(ent)
-    return ent:GetTable().FPPOwner
+    return GetTable(ent).FPPOwner
 end
 
 --[[-------------------------------------------------------------------------
