@@ -397,7 +397,7 @@ local function onEntitiesCreated(ents)
 
         if blockedEnts[ent:GetClass()] then continue end
 
-        for _, ply in player.Iterator() do
+        for _, ply in ipairs(player.GetAll()) do
             local changed = FPP.calculateCanTouch(ply, ent)
             -- Only send data that has been changed
             if not changed then continue end
