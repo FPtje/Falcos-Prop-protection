@@ -820,7 +820,6 @@ local function CleanupDisconnected(ply, cmd, args)
     end
 
     local target_ply = Player(args[1])
-    local target_plyweapons = target_ply:GetWeapons()
 
     for _, v in ipairs(ents.GetAll()) do
         local owner = v:CPPIGetOwner()
