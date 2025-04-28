@@ -824,24 +824,13 @@ local function CleanupDisconnected(ply, cmd, args)
 
     for _, v in ipairs(ents.GetAll()) do
         local owner = v:CPPIGetOwner()
-        
+
         if owner == target_ply then
-            if v:IsWeapon() then
-                local hasweapon = false
-
-                for _, weapon in ipairs(target_plyweapons) do
-                    if weapon == v then
-                        hasweapon = true
-                        break
-                    end
-                end
-
-                if not hasweapon then
-                    v:Remove()
-                end
-            else
-                v:Remove()
+            if v:IsWeapon() and IsValid(v:GetOwner()) then
+                continue
             end
+
+            v:Remove()
         end
     end
 
