@@ -800,27 +800,52 @@ concommand.Add("FPP_SetBuddy", SetBuddy)
 
 local function CleanupDisconnected(ply, cmd, args)
     if not args[1] then FPP.Notify(ply, "Invalid argument", false) return end
+
     if args[1] == "disconnected" then
         for _, v in ipairs(ents.GetAll()) do
-            local Owner = v:CPPIGetOwner()
-            if Owner and not IsValid(Owner) then
+            local owner = v:CPPIGetOwner()
+
+            if owner and not IsValid(owner) then
                 v:Remove()
             end
         end
+
         FPP.NotifyAll(((ply.Nick and ply:Nick()) or "Console") .. " removed all disconnected players' props", true)
+
         return
     elseif not tonumber(args[1]) or not IsValid(Player(tonumber(args[1]))) then
         FPP.Notify(ply, "Invalid player", false)
+
         return
     end
 
+    local target_ply = Player(args[1])
+    local target_plyweapons = target_ply:GetWeapons()
+
     for _, v in ipairs(ents.GetAll()) do
-        local Owner = v:CPPIGetOwner()
-        if Owner == Player(args[1]) and not v:IsWeapon() then
-            v:Remove()
+        local owner = v:CPPIGetOwner()
+        
+        if owner == target_ply then
+            if v:IsWeapon() then
+                local hasweapon = false
+
+                for _, weapon in ipairs(target_plyweapons) do
+                    if weapon == v then
+                        hasweapon = true
+                        break
+                    end
+                end
+
+                if not hasweapon then
+                    v:Remove()
+                end
+            else
+                v:Remove()
+            end
         end
     end
-    FPP.NotifyAll(((ply.Nick and ply:Nick()) or "Console") .. " removed " .. Player(args[1]):Nick() .. "'s entities", true)
+
+    FPP.NotifyAll(((ply.Nick and ply:Nick()) or "Console") .. " removed " .. target_ply:Nick() .. "'s entities", true)
 end
 concommand.Add("FPP_Cleanup", runIfAccess("FPP_Cleanup", CleanupDisconnected))
 
