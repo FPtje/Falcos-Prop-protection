@@ -261,7 +261,7 @@ function FPP.plyCanTouchEnt(ply, ent, touchType)
     local canTouch = entCanTouch[ply]
     -- if an entity is constrained, return the least of the rights
     local entRestrictConstraint = entTable.FPPRestrictConstraint
-    if entRestrictConstraint and entRestrictConstraint[ply] then
+    if entRestrictConstraint and entRestrictConstraint[ply] and tobool(FPP.Settings.FPP_GLOBALSETTINGS1.constraintsrestrictents) then
         canTouch = bit_band(entRestrictConstraint[ply], entCanTouch[ply])
     end
 
