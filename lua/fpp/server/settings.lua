@@ -45,6 +45,13 @@ function FPP.NotifyAll(text, bool, total_time)
     end
 end
 
+local constraints = {
+    ["phys_spring"] = true,
+}
+local function isConstraint(ent)
+    return ent:IsConstraint() or constraints[ent:GetClass()] or false
+end
+
 local function getSettingsChangedEntities(settingsType, setting)
     local plys, entities = {}, {}
 
@@ -92,6 +99,29 @@ local function getSettingsChangedEntities(settingsType, setting)
         return setting == "admincanblocked" and plys or player.GetAll(), entities
     elseif setting == "iswhitelist" then
         return player.GetAll(), ents.GetAll()
+    elseif setting == "constraintsrestrictents" then
+        local alreadyFound = {}
+
+        for _, v in ipairs(ents.GetAll()) do
+            if isConstraint(v) then
+                local ent1, ent2 = v:GetConstrainedEntities()
+                ent1, ent2 = ent1 or v.Ent1, ent2 or v.Ent2
+
+                if ent1 and not alreadyFound[ent1] then
+                    alreadyFound[ent1] = true
+                    table.insert(entities, ent1)
+                end
+
+                if ent2 and not alreadyFound[ent2] then
+                    alreadyFound[ent2] = true
+                    table.insert(entities, ent2)
+                end
+            end
+        end
+
+        FPP.RecalculateConstrainedEntities(plys, entities)
+
+        return {}, {}
     end
 end
 
