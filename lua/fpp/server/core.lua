@@ -331,7 +331,6 @@ function FPP.Protect.EntityDamage(ent, dmginfo)
             local cantouch = FPP.plyCanTouchEnt(attackerOwner, ent, "EntityDamage")
 
             if not cantouch then
-                dmginfo:SetDamage(0)
                 ent.FPPAntiDamageWorld = ent.FPPAntiDamageWorld or 0
                 ent.FPPAntiDamageWorld = ent.FPPAntiDamageWorld + 1
                 timer.Simple(1, function()
@@ -341,19 +340,22 @@ function FPP.Protect.EntityDamage(ent, dmginfo)
                         ent.FPPAntiDamageWorld = nil
                     end
                 end)
+
+                return true
             end
+
             return
         end
 
         if attacker == game.GetWorld() and ent.FPPAntiDamageWorld then
-            dmginfo:SetDamage(0)
+            return true
         end
+
         return
     end
 
     local cantouch = FPP.plyCanTouchEnt(attacker, ent, "EntityDamage")
-
-    if not cantouch then dmginfo:SetDamage(0) end
+    if not cantouch then return true end
 end
 hook.Add("EntityTakeDamage", "FPP.Protect.EntityTakeDamage", FPP.Protect.EntityDamage)
 
