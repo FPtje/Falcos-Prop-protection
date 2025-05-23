@@ -105,8 +105,11 @@ local function calculateCanTouchForType(ply, ent, touchType)
         local adminsCanTouchBlocked = FPPSettings.admincanblocked ~= 0
         local playersCanBlocked = FPPSettings.canblocked ~= 0
 
-        return (playersCanBlocked or isAdmin and adminsCanTouchBlocked) and not getPlySetting(ply, "FPP_PrivateSettings_BlockedProps"),
-               reasonNumbers.blocked
+        local canPhysgunBlocked = (playersCanBlocked or isAdmin and adminsCanTouchBlocked) and not getPlySetting(ply, "FPP_PrivateSettings_BlockedProps")
+
+        if not canPhysgunBlocked then
+            return canPhysgunBlocked, reasonNumbers.blocked
+        end
     end
 
     -- touch own props
