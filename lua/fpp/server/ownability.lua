@@ -287,7 +287,7 @@ Networking
 ---------------------------------------------------------------------------]]
 util.AddNetworkString("FPP_TouchabilityData")
 
--- Sends MAX_EDICT_BITS(13) + (1, 8) + 5 + 20 = 46 bits of ownership data per entity
+-- Sends MAX_EDICT_BITS(13) + (1, 8) + 5 + 20 = (39, 46) bits of ownership data per entity
 local MAX_PLAYER_BITS = math.ceil(math.log(1 + game.MaxPlayers()) / math.log(2))
 
 local function netWriteEntData(ply, ent)
