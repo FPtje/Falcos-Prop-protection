@@ -286,13 +286,16 @@ end
 Networking
 ---------------------------------------------------------------------------]]
 util.AddNetworkString("FPP_TouchabilityData")
--- Sends 13 + 8 + 5 + 20 = 46 bits of ownership data per entity
+
+-- Sends MAX_EDICT_BITS(13) + (1, 8) + 5 + 20 = 46 bits of ownership data per entity
+local MAX_PLAYER_BITS = math.ceil(math.log(1 + game.MaxPlayers()) / math.log(2))
+
 local function netWriteEntData(ply, ent)
     -- EntIndex for when it's out of the PVS of the player
-    net.WriteUInt(ent:EntIndex(), 13)
+    net.WriteUInt(ent:EntIndex(), MAX_EDICT_BITS)
 
     local owner = ent:CPPIGetOwner()
-    net.WriteUInt(IsValid(owner) and owner:EntIndex() or 255, 8)
+    net.WriteUInt(IsValid(owner) and owner:EntIndex() or 0, MAX_PLAYER_BITS)
 
     local entTable = ent:GetTable()
     net.WriteUInt(entTable.FPPRestrictConstraint and entTable.FPPRestrictConstraint[ply] or entTable.FPPCanTouch[ply], 5) -- touchability information
@@ -332,9 +335,10 @@ function FPP.plySendTouchData(ply, ents)
     end
 
     net.Start("FPP_TouchabilityData")
+        net.WriteUInt(count, MAX_EDICT_BITS)
+
         for i = 1, count do
             netWriteEntData(ply, ents[i])
-            net.WriteBit(i == count)
         end
     net.Send(ply)
 end
