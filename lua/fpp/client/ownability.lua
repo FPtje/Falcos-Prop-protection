@@ -27,7 +27,7 @@ local reasons = {
 local MAX_PLAYER_BITS = math.ceil(math.log(1 + game.MaxPlayers()) / math.log(2))
 
 local function receiveTouchData(len)
-    for i = 1, net.ReadUInt(MAX_EDICT_BITS) do
+    repeat
         local entIndex = net.ReadUInt(MAX_EDICT_BITS)
         local ownerIndex = net.ReadUInt(MAX_PLAYER_BITS)
         local touchability = net.ReadUInt(5)
@@ -40,7 +40,7 @@ local function receiveTouchData(len)
         FPP.entOwners[entIndex] = ownerIndex
         FPP.entTouchability[entIndex] = touchability
         FPP.entTouchReasons[entIndex] = reason
-    end
+    until net.ReadBit() == 1
 end
 net.Receive("FPP_TouchabilityData", receiveTouchData)
 
