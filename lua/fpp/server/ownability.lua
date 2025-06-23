@@ -340,10 +340,9 @@ function FPP.plySendTouchData(ply, ents)
     end
 
     net.Start("FPP_TouchabilityData")
-        net.WriteUInt(count, MAX_EDICT_BITS)
-
         for i = 1, count do
             netWriteEntData(ply, ents[i])
+            net.WriteBit(i == count)
         end
     net.Send(ply)
 end
