@@ -580,7 +580,7 @@ end
 
 FPP.oldSetNWString = FPP.oldSetNWString or entMeta.SetNWString
 function entMeta:SetNWString(str, val)
-    if str ~= "usergroup" then return FPP.oldSetNWString(self, str, val) end
+    if str ~= "UserGroup" then return FPP.oldSetNWString(self, str, val) end
 
     userGroupRecalculate(self)
     return FPP.oldSetNWString(self, str, val)
