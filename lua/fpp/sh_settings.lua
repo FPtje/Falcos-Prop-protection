@@ -120,17 +120,14 @@ CAMI.RegisterPrivilege{
 }
 
 function FPP.calculatePlayerPrivilege(priv, callback)
-    local plys = player.GetAll()
-    local count = #plys
-
-    for _, ply in ipairs(plys) do
-        local function onRes(b)
-            count = count - 1
-            ply.FPP_Privileges = ply.FPPPrivileges or {}
+    local n = 0
+    for _, ply in player.Iterator() do
+        n = n + 1
+        CAMI.PlayerHasAccess(ply, priv, function(b)
+            ply.FPP_Privileges = ply.FPP_Privileges or {}
             ply.FPP_Privileges[priv] = b
-
-            if count == 0 then callback() end
-        end
-        CAMI.PlayerHasAccess(ply, priv, onRes)
+            n = n - 1
+            if n == 0 then callback() end
+        end)
     end
 end
