@@ -4,6 +4,7 @@ local entMeta = FindMetaTable("Entity")
 
 local bit_bor = bit.bor
 local bit_band = bit.band
+local string_lower = string.lower
 
 --[[-------------------------------------------------------------------------
 Entity data explanation.
@@ -580,7 +581,7 @@ end
 
 FPP.oldSetNWString = FPP.oldSetNWString or entMeta.SetNWString
 function entMeta:SetNWString(str, val)
-    if str ~= "UserGroup" then return FPP.oldSetNWString(self, str, val) end
+    if string_lower(str) ~= "usergroup" then return FPP.oldSetNWString(self, str, val) end
 
     userGroupRecalculate(self)
     return FPP.oldSetNWString(self, str, val)
@@ -588,7 +589,7 @@ end
 
 FPP.oldSetNetworkedString = FPP.oldSetNetworkedString or entMeta.SetNetworkedString
 function entMeta:SetNetworkedString(str, val)
-    if str ~= "usergroup" then return FPP.oldSetNetworkedString(self, str, val) end
+    if string_lower(str) ~= "usergroup" then return FPP.oldSetNetworkedString(self, str, val) end
 
     userGroupRecalculate(self)
     return FPP.oldSetNetworkedString(self, str, val)
