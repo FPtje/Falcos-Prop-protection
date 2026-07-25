@@ -4,7 +4,6 @@ local entMeta = FindMetaTable("Entity")
 
 local bit_bor = bit.bor
 local bit_band = bit.band
-local string_lower = string.lower
 
 --[[-------------------------------------------------------------------------
 Entity data explanation.
@@ -581,7 +580,8 @@ end
 
 FPP.oldSetNWString = FPP.oldSetNWString or entMeta.SetNWString
 function entMeta:SetNWString(str, val)
-    if string_lower(str) ~= "usergroup" then return FPP.oldSetNWString(self, str, val) end
+    -- Note: usergroup is the NWVar used by some admin mod that didn't work with the real NWVar called UserGroup. This is a workaround for that.
+    if str ~= "usergroup" then return FPP.oldSetNWString(self, str, val) end
 
     userGroupRecalculate(self)
     return FPP.oldSetNWString(self, str, val)
@@ -589,8 +589,14 @@ end
 
 FPP.oldSetNetworkedString = FPP.oldSetNetworkedString or entMeta.SetNetworkedString
 function entMeta:SetNetworkedString(str, val)
-    if string_lower(str) ~= "usergroup" then return FPP.oldSetNetworkedString(self, str, val) end
+    if str ~= "usergroup" then return FPP.oldSetNetworkedString(self, str, val) end
 
     userGroupRecalculate(self)
     return FPP.oldSetNetworkedString(self, str, val)
 end
+
+-- SetUserGroup and SetNWString are not 100% covering, see
+-- https://github.com/FPtje/Falcos-Prop-protection/pull/354
+-- Adding the CAMI hook should be the final solution. If there are still admin mods that
+-- are not covered, then the solution is for _those_ addons to implement CAMI.
+hook.Add("CAMI.PlayerUsergroupChanged", "FPP_CAMI_PlayerUsergroupChanged", userGroupRecalculate)
