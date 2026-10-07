@@ -415,7 +415,8 @@ local invalidToolData = {
     ["ry"] = 360,
     ["rz"] = 360
 }
-invalidToolData.override = invalidToolData.material
+invalidToolData.override = table.Copy(invalidToolData.material)
+table.RemoveByValue(invalidToolData.override, " ")
 invalidToolData.rope_material = invalidToolData.material
 
 function FPP.Protect.CanTool(ply, trace, tool, ENT)
@@ -719,3 +720,4 @@ function constraint.CanConstrain(ent, bone)
 
     return canConstrain(ent, bone)
 end
+
