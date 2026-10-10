@@ -416,6 +416,8 @@ local invalidToolData = {
     ["rz"] = 360
 }
 invalidToolData.override = table.Copy(invalidToolData.material)
+-- Fixes issue where the creator tool breaks because creator_override is set to "0 000000000" by
+-- `garrysmod/lua/vgui/spawnicon.lua#L277`. With the space being blocked, the tool gets denied.
 table.RemoveByValue(invalidToolData.override, " ")
 invalidToolData.rope_material = invalidToolData.material
 
@@ -720,4 +722,3 @@ function constraint.CanConstrain(ent, bone)
 
     return canConstrain(ent, bone)
 end
-
